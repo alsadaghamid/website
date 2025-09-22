@@ -1,0 +1,22 @@
+{
+    "name": "أنت صاحب المنصة",
+    "short_name": "المنصة",
+    "description": "منصة تمكين الأفراد من التعبير والقيادة والتأثير الإيجابي",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1e3a8a",
+    "theme_color": "#1e3a8a",
+    "orientation": "portrait-primary",
+    "lang": "ar",
+    "dir": "rtl",
+    "icons": [
+        {
+            "src": "logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["education", "social", "productivity"],
+    "screenshots": []
+}

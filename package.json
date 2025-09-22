@@ -1,0 +1,62 @@
+{
+  "name": "antsahib-platform",
+  "version": "1.0.0",
+  "description": "أنت صاحب المنصة - منصة تمكين القيادة والتعبير العربي",
+  "main": "index.html",
+  "scripts": {
+    "start": "php -S localhost:8000",
+    "dev": "php -S localhost:8000",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "echo 'Deploy to Netlify via GitHub'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "arabic",
+    "platform",
+    "empowerment",
+    "leadership",
+    "content",
+    "community",
+    "تمكين",
+    "قيادة",
+    "محتوى",
+    "مجتمع"
+  ],
+  "author": "أنت صاحب المنصة",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/antsahib-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/antsahib-platform/issues"
+  },
+  "homepage": "https://www.antsahib.almunsaa.com/",
+  "engines": {
+    "node": ">=14.0.0",
+    "php": ">=7.4.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^12.0.0"
+  },
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "files": [
+    "*.html",
+    "*.css",
+    "*.js",
+    "*.php",
+    "*.svg",
+    "*.json",
+    "*.xml",
+    "*.txt",
+    "*.md",
+    "functions/**/*",
+    "assets/**/*"
+  ]
+}

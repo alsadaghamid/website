@@ -1,0 +1,36 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+      .logo-text {
+        font-family: 'Cairo', 'Arial', 'Segoe UI', sans-serif;
+        font-weight: 700;
+        text-anchor: start;
+        dominant-baseline: middle;
+      }
+      .logo-person { fill: #1e3a8a; }
+      .logo-head { fill: #ff8c00; }
+      .logo-mic { fill: #ff8c00; }
+      .logo-podium { fill: #3b82f6; }
+      .logo-base { fill: #1e40af; }
+    </style>
+  </defs>
+
+  <!-- Person figure -->
+  <circle cx="35" cy="25" r="12" class="logo-head"/>
+  <path d="M 23 37 Q 35 32 47 37 L 47 55 Q 35 60 23 55 Z" class="logo-person"/>
+
+  <!-- Microphone -->
+  <rect x="42" y="20" width="3" height="15" class="logo-mic"/>
+  <circle cx="43.5" cy="18" r="2" class="logo-mic"/>
+
+  <!-- Podium -->
+  <rect x="15" y="50" width="35" height="15" class="logo-podium"/>
+  <rect x="18" y="65" width="29" height="8" class="logo-base"/>
+  <rect x="20" y="73" width="25" height="4" class="logo-base"/>
+
+  <!-- Arabic Text -->
+  <text x="65" y="25" class="logo-text" font-size="16" fill="#ffd700">أنت</text>
+  <text x="65" y="45" class="logo-text" font-size="16" fill="#ffd700">صاحب</text>
+  <text x="65" y="65" class="logo-text" font-size="16" fill="#ffd700">المنصة</text>
+</svg>
