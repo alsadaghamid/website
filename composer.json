@@ -15,7 +15,11 @@
     "require": {
         "php": "^8.0",
         "ext-json": "*",
-        "ext-gd": "*"
+        "ext-gd": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-session": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

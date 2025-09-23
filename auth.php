@@ -4,12 +4,14 @@
  * Features: Secure authentication, JWT tokens, rate limiting, CSRF protection
  */
 
-// Security headers
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
-header('X-XSS-Protection: 1; mode=block');
-header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-header('Content-Type: application/json; charset=utf-8');
+// Security headers (only for web requests)
+if (!defined('CLI_MODE') && php_sapi_name() !== 'cli') {
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: DENY');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+    header('Content-Type: application/json; charset=utf-8');
+}
 
 // Error reporting (disable in production)
 ini_set('display_errors', 0);
@@ -20,11 +22,13 @@ require_once 'config.php';
 require_once 'classes.php';
 
 // Start session with secure settings
-session_start([
-    'cookie_secure' => isset($_SERVER['HTTPS']),
-    'cookie_httponly' => true,
-    'cookie_samesite' => 'Strict'
-]);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start([
+        'cookie_secure' => isset($_SERVER['HTTPS']),
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Strict'
+    ]);
+}
 
 // Rate limiting
 $rateLimit = new RateLimit();
@@ -38,8 +42,11 @@ if (!$rateLimit->check()) {
     exit;
 }
 
-// CSRF protection
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// CSRF protection - Skip for GET requests, get_csrf_token, and get_posts
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+if ($requestMethod === 'POST' && $action !== 'get_csrf_token' && $action !== 'get_posts') {
     $csrfToken = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!validateCSRFToken($csrfToken)) {
         http_response_code(403);
@@ -159,6 +166,10 @@ try {
 
         case 'get_stats':
             handleGetStats($db);
+            break;
+
+        case 'get_csrf_token':
+            handleGetCSRFToken();
             break;
 
         default:
@@ -747,6 +758,19 @@ function handleGetStats($db) {
 }
 
 /**
+ * Handle get CSRF token
+ */
+function handleGetCSRFToken() {
+    $token = generateCSRFToken();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب رمز CSRF بنجاح',
+        'csrf_token' => $token
+    ]);
+}
+
+/**
  * Validate CSRF token
  */
 function validateCSRFToken($token) {
@@ -759,18 +783,13 @@ function validateCSRFToken($token) {
     if (empty($sessionToken)) {
         // Generate new token if not exists
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        return false;
+        return false; // Token can't match since it was just generated
     }
 
     return hash_equals($sessionToken, $token);
 }
 
-/**
- * Custom Exception Classes
- */
-class ValidationException extends Exception {}
-class AuthenticationException extends Exception {}
-class DatabaseException extends Exception {}
+
 
 /**
  * Rate Limiting Class
@@ -780,7 +799,7 @@ class RateLimit {
     private $window = 3600; // 1 hour
 
     public function check() {
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         $key = "rate_limit_{$ip}";
         $now = time();
 

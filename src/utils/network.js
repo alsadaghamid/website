@@ -88,7 +88,7 @@ export class APIClient {
                 }
 
                 if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    throw new APIError('Network error', 0);
+                    throw new APIError('Cannot complete request, make sure you are connected and logged in with the selected provider.', 0);
                 }
 
                 // If this is the last attempt, throw the error

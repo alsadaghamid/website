@@ -25,6 +25,9 @@ class PlatformApp {
             this.initializeTooltips();
             this.initializeKeyboardShortcuts();
 
+            // Initialize CSRF token
+            await this.initializeCSRFToken();
+
             // Load initial data
             await this.loadPosts();
 
@@ -80,12 +83,31 @@ class PlatformApp {
 
     // Toggle between light and dark themes
     toggleTheme() {
-        this.theme = this.theme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', this.theme);
-        localStorage.setItem('theme', this.theme);
-        this.updateThemeIcon();
+        try {
+            this.theme = this.theme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', this.theme);
+            localStorage.setItem('theme', this.theme);
+            this.updateThemeIcon();
 
-        this.showNotification(`تم التبديل إلى الوضع ${this.theme === 'light' ? 'الفاتح' : 'المظلم'}`, 'success');
+            this.showNotification(`تم التبديل إلى الوضع ${this.theme === 'light' ? 'الفاتح' : 'المظلم'}`, 'success');
+
+            // Test theme by checking if CSS variables are applied
+            const testElement = document.createElement('div');
+            testElement.style.position = 'absolute';
+            testElement.style.visibility = 'hidden';
+            testElement.style.backgroundColor = 'var(--primary-bg)';
+            document.body.appendChild(testElement);
+
+            const computedStyle = window.getComputedStyle(testElement);
+            if (computedStyle.backgroundColor === 'rgba(0, 0, 0, 0)' || computedStyle.backgroundColor === 'transparent') {
+                console.warn('Theme CSS variables may not be loading correctly');
+            }
+
+            document.body.removeChild(testElement);
+        } catch (error) {
+            console.error('Error toggling theme:', error);
+            this.showNotification('حدث خطأ في تبديل السمة', 'error');
+        }
     }
 
     // Update theme toggle icon
@@ -422,6 +444,33 @@ class PlatformApp {
         }
     }
 
+    // Initialize CSRF token
+    async initializeCSRFToken() {
+        try {
+            const response = await fetch('auth.php?action=get_csrf_token', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.csrf_token) {
+                this.csrfToken = result.csrf_token;
+                // Store in session for form submissions
+                sessionStorage.setItem('csrf_token', result.csrf_token);
+            }
+        } catch (error) {
+            console.warn('Could not initialize CSRF token:', error);
+        }
+    }
+
+    // Get CSRF token
+    getCSRFToken() {
+        return this.csrfToken || sessionStorage.getItem('csrf_token');
+    }
+
     // Initialize PWA features
     initializePWA() {
         if ('serviceWorker' in navigator) {
@@ -482,18 +531,152 @@ class PlatformApp {
         try {
             this.showLoading();
 
-            // Simulate API call - replace with actual API endpoint
-            const response = await this.mockApiCall('/api/posts');
+            // Try to get posts from the actual API
+            const response = await fetch('auth.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'get_posts',
+                    page: 1,
+                    limit: 10,
+                    csrf_token: this.getCSRFToken()
+                })
+            });
 
-            this.posts = response.posts || [];
+            const result = await response.json();
+
+            if (result.success) {
+                this.posts = result.data.posts || [];
+                this.displayPosts();
+            } else {
+                // Fallback to mock data if API fails
+                console.warn('API failed, using mock data');
+                const mockResponse = await this.mockApiCall('/api/posts');
+                this.posts = mockResponse.posts || [];
+            }
+
             this.hideLoading();
-
             return this.posts;
         } catch (error) {
             console.error('Error loading posts:', error);
             this.hideLoading();
-            this.showNotification('حدث خطأ في تحميل المحتوى', 'error');
-            return [];
+
+            // Fallback to mock data
+            try {
+                const mockResponse = await this.mockApiCall('/api/posts');
+                this.posts = mockResponse.posts || [];
+            } catch (mockError) {
+                console.error('Mock API also failed:', mockError);
+                this.showNotification('حدث خطأ في تحميل المحتوى', 'error');
+                return [];
+            }
+
+            return this.posts;
+        }
+    }
+
+    // Display posts on the page
+    displayPosts() {
+        const postsContainer = document.getElementById('posts-container');
+        if (!postsContainer) {
+            console.warn('Posts container not found');
+            return;
+        }
+
+        if (this.posts.length === 0) {
+            postsContainer.innerHTML = `
+                <div class="no-posts">
+                    <div class="no-posts-icon">📝</div>
+                    <h3>لا توجد مشاركات متاحة</h3>
+                    <p>سيتم إضافة المحتوى قريباً. كن أول من يشارك!</p>
+                    <button class="btn btn-primary" onclick="app.showCreatePostModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>إنشاء منشور جديد</span>
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        postsContainer.innerHTML = this.posts.map(post => `
+            <article class="post-card" data-category="${post.category}">
+                <div class="post-header">
+                    <div class="post-icon">
+                        ${this.getPostIcon(post.category)}
+                    </div>
+                    <div class="post-meta">
+                        <span class="post-category">${post.category}</span>
+                        <time class="post-date" datetime="${post.created_at}">${this.formatDate(post.created_at)}</time>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <h3 class="post-title">${post.title}</h3>
+                    <p class="post-excerpt">${post.excerpt}</p>
+                </div>
+                <div class="post-footer">
+                    <div class="post-author">
+                        <div class="author-avatar">${post.author?.avatar || '👤'}</div>
+                        <span class="author-name">${post.author?.name || 'مجتمع المنصة'}</span>
+                    </div>
+                    <a href="content.html" class="post-link" aria-label="اقرأ المزيد عن ${post.title}">
+                        <span>اقرأ المزيد</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+        `).join('');
+
+        // Re-initialize animations for new posts
+        this.initializeAnimations();
+    }
+
+    // Get post icon based on category
+    getPostIcon(category) {
+        const icons = {
+            'فيديوهات': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="23,7 16,12 23,17 23,7"></polygon>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>`,
+            'مقالات': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14,2 14,8 20,8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10,9 9,9 8,9"></polyline>
+            </svg>`,
+            'منتدى': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>`,
+            'مبادرات': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+            </svg>`
+        };
+        return icons[category] || icons['مقالات'];
+    }
+
+    // Format date for display
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+            return 'اليوم';
+        } else if (diffDays < 7) {
+            return `منذ ${diffDays} أيام`;
+        } else if (diffDays < 30) {
+            const weeks = Math.floor(diffDays / 7);
+            return `منذ ${weeks} أسابيع`;
+        } else {
+            return date.toLocaleDateString('ar-SA');
         }
     }
 
@@ -607,22 +790,62 @@ class PlatformApp {
         try {
             this.showLoading();
 
-            // Simulate API call
-            const response = await this.mockApiCall('/api/auth/login');
+            // Check connectivity first
+            const isConnected = await this.checkConnectivity();
+            if (!isConnected) {
+                this.showNotification('لا يوجد اتصال بالإنترنت. تحقق من الاتصال وأعد المحاولة.', 'error');
+                this.hideLoading();
+                return;
+            }
 
-            if (response.success) {
-                this.currentUser = response.user;
+            // Try to use the actual API endpoint
+            const response = await fetch('auth.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'login',
+                    login: data.identifier,
+                    password: data.password,
+                    remember: data.remember ? 1 : 0,
+                    csrf_token: this.getCSRFToken()
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.currentUser = result.data.user;
                 this.updateUserInterface();
                 this.closeAuthModal();
                 this.showNotification('تم تسجيل الدخول بنجاح!', 'success');
+
+                // Store token if provided
+                if (result.data.token) {
+                    sessionStorage.setItem('auth_token', result.data.token);
+                }
             } else {
-                this.showNotification('بيانات الدخول غير صحيحة', 'error');
+                this.showNotification(result.message || 'بيانات الدخول غير صحيحة', 'error');
             }
 
             this.hideLoading();
         } catch (error) {
             console.error('Login error:', error);
-            this.showNotification('حدث خطأ في تسجيل الدخول', 'error');
+
+            // Provide specific error messages based on error type
+            let errorMessage = 'حدث خطأ في تسجيل الدخول';
+            if (error.message && error.message.includes('Cannot complete request')) {
+                errorMessage = 'مشكلة في الاتصال. تحقق من الإنترنت وأعد المحاولة.';
+            } else if (error.message && error.message.includes('Network error')) {
+                errorMessage = 'لا يمكن الاتصال بالخادم. تحقق من الإنترنت.';
+            } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                errorMessage = 'مشكلة في الشبكة. تحقق من الاتصال بالإنترنت.';
+            } else if (error instanceof TypeError) {
+                errorMessage = 'خطأ في الاتصال. تحقق من الإنترنت وأعد المحاولة.';
+            }
+
+            this.showNotification(errorMessage, 'error');
             this.hideLoading();
         }
     }
@@ -757,8 +980,26 @@ class PlatformApp {
     handleConnectionChange(online) {
         if (online) {
             this.showNotification('تم استعادة الاتصال بالإنترنت', 'success');
+            // Process any queued requests
+            if (window.requestQueue) {
+                window.requestQueue.process(window.apiClient);
+            }
         } else {
-            this.showNotification('انقطع الاتصال بالإنترنت', 'warning');
+            this.showNotification('انقطع الاتصال بالإنترنت. سيتم حفظ طلباتك مؤقتاً.', 'warning');
+        }
+    }
+
+    // Check network connectivity
+    async checkConnectivity() {
+        try {
+            const response = await fetch('/index.php', {
+                method: 'HEAD',
+                cache: 'no-cache',
+                timeout: 5000
+            });
+            return response.ok;
+        } catch {
+            return false;
         }
     }
 
@@ -1091,7 +1332,14 @@ class PlatformApp {
     }
 
     socialAuth(provider) {
-        this.showNotification(`تسجيل الدخول باستخدام ${provider} قيد التطوير`, 'info');
+        this.showNotification(`تسجيل الدخول باستخدام ${provider} قيد التطوير. يرجى استخدام تسجيل الدخول العادي.`, 'info');
+
+        // Log the attempt for debugging
+        console.log(`Social auth attempt with provider: ${provider}`);
+
+        // You can implement actual social auth here when ready
+        // Example: redirect to OAuth endpoint
+        // window.location.href = `/auth/${provider}`;
     }
 }
 

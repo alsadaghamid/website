@@ -24,7 +24,8 @@ $mimeTypes = [
     'jpeg' => 'image/jpeg',
     'gif' => 'image/gif',
     'svg' => 'image/svg+xml',
-    'ico' => 'image/x-icon'
+    'ico' => 'image/x-icon',
+    'php' => 'application/x-php'
 ];
 
 // Get file extension
@@ -32,7 +33,10 @@ $ext = pathinfo($request, PATHINFO_EXTENSION);
 $filePath = '.' . $request;
 
 // Security check - prevent directory traversal
-if (strpos($filePath, '..') !== false || !file_exists($filePath)) {
+if (strpos($filePath, '..') !== false ||
+    !file_exists($filePath) ||
+    !is_file($filePath) ||
+    !preg_match('/\.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|php)$/', $filePath)) {
     http_response_code(404);
     echo 'File not found';
     exit;
@@ -48,6 +52,15 @@ header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
 
-// Output file content
-readfile($filePath);
+// Handle PHP files differently
+if ($ext === 'php') {
+    // For PHP files, we need to include them and capture output
+    ob_start();
+    include $filePath;
+    $content = ob_get_clean();
+    echo $content;
+} else {
+    // For static files, use readfile
+    readfile($filePath);
+}
 ?>

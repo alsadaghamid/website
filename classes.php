@@ -67,7 +67,7 @@ class Database {
     /**
      * Save data to JSON file
      */
-    private function saveData($data = null) {
+    public function saveData($data = null) {
         if ($data !== null) {
             $this->data = $data;
         }
@@ -118,6 +118,15 @@ class Database {
     public function getUserByEmail($email) {
         foreach ($this->data['users'] as $user) {
             if ($user['email'] === $email) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
+    public function getUserByPhone($phone) {
+        foreach ($this->data['users'] as $user) {
+            if ($user['phone'] === $phone) {
                 return $user;
             }
         }
@@ -180,6 +189,28 @@ class Database {
         foreach ($this->data['users'] as &$user) {
             if ($user['id'] === $userId) {
                 $user['last_login'] = date('Y-m-d H:i:s');
+                $this->saveData();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function updateUserPassword($userId, $newPasswordHash) {
+        foreach ($this->data['users'] as &$user) {
+            if ($user['id'] === $userId) {
+                $user['password'] = $newPasswordHash;
+                $this->saveData();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function updateUserPasswordByEmail($email, $newPasswordHash) {
+        foreach ($this->data['users'] as &$user) {
+            if ($user['email'] === $email) {
+                $user['password'] = $newPasswordHash;
                 $this->saveData();
                 return true;
             }
@@ -545,6 +576,22 @@ class Database {
     }
 
     /**
+     * Session Management Methods
+     */
+
+    public function getSession($userId) {
+        return $this->data['sessions'][$userId] ?? null;
+    }
+
+    public function setSession($userId, $sessionData) {
+        $this->data['sessions'][$userId] = $sessionData;
+    }
+
+    public function removeSession($userId) {
+        unset($this->data['sessions'][$userId]);
+    }
+
+    /**
      * Statistics Methods
      */
 
@@ -706,13 +753,13 @@ class Auth {
         $_SESSION['expires'] = $expires;
 
         // Store session in database
-        $this->db->data['sessions'][$userId] = [
+        $this->db->setSession($userId, [
             'token' => $token,
             'expires' => $expires,
             'created_at' => date('Y-m-d H:i:s'),
-            'ip_address' => $_SERVER['REMOTE_ADDR'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
-        ];
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'CLI'
+        ]);
 
         $this->db->saveData();
     }
@@ -721,7 +768,7 @@ class Auth {
         $userId = $_SESSION['user_id'] ?? null;
 
         if ($userId) {
-            unset($this->db->data['sessions'][$userId]);
+            $this->db->removeSession($userId);
             $this->db->saveData();
         }
 
@@ -755,7 +802,7 @@ class Auth {
             return false;
         }
 
-        $session = $this->db->data['sessions'][$userId] ?? null;
+        $session = $this->db->getSession($userId);
 
         return $session && $session['token'] === $token;
     }
@@ -764,7 +811,8 @@ class Auth {
         foreach ($this->db->data['sessions'] as $userId => $session) {
             if ($session['token'] === $token && time() < $session['expires']) {
                 $newToken = bin2hex(random_bytes(32));
-                $this->db->data['sessions'][$userId]['token'] = $newToken;
+                $session['token'] = $newToken;
+                $this->db->setSession($userId, $session);
                 $this->db->saveData();
 
                 $_SESSION['token'] = $newToken;
@@ -791,14 +839,7 @@ class Auth {
             'threads' => 3
         ]);
 
-        foreach ($this->db->data['users'] as &$u) {
-            if ($u['id'] === $userId) {
-                $u['password'] = $newPasswordHash;
-                break;
-            }
-        }
-
-        $this->db->saveData();
+        $this->db->updateUserPassword($userId, $newPasswordHash);
     }
 
     public function resetPassword($email, $newPassword) {
@@ -818,14 +859,7 @@ class Auth {
             'threads' => 3
         ]);
 
-        foreach ($this->db->data['users'] as &$u) {
-            if ($u['email'] === $email) {
-                $u['password'] = $newPasswordHash;
-                break;
-            }
-        }
-
-        $this->db->saveData();
+        $this->db->updateUserPasswordByEmail($email, $newPasswordHash);
     }
 
     public function sendVerificationEmail($email) {
@@ -841,6 +875,17 @@ class Auth {
             $user['is_verified'] = true;
         }
         $this->db->saveData();
+    }
+
+    public function updateUserVerification($userId, $isVerified) {
+        foreach ($this->db->data['users'] as &$user) {
+            if ($user['id'] === $userId) {
+                $user['is_verified'] = $isVerified;
+                $this->db->saveData();
+                return true;
+            }
+        }
+        return false;
     }
 
     private function validatePasswordStrength($password) {

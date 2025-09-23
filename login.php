@@ -1,5 +1,5 @@
 <?php
-session_start();
+// Session is managed by config.php and auth.php
 header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>

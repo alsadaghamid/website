@@ -1,80 +1,33 @@
 <?php
-session_start();
+// Session is managed by config.php and auth.php
 header('Content-Type: text/html; charset=utf-8');
 
-// Database configuration
-define('DB_FILE', 'users.json');
+// Include centralized database and authentication
+require_once 'config.php';
+require_once 'classes.php';
 
-// Create users database if not exists
-if (!file_exists(DB_FILE)) {
-    file_put_contents(DB_FILE, json_encode(['users' => [], 'sessions' => []]));
-}
-
-function loadDatabase() {
-    return json_decode(file_get_contents(DB_FILE), true);
-}
-
-function saveDatabase($data) {
-    file_put_contents(DB_FILE, json_encode($data, JSON_PRETTY_PRINT));
-}
-
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
-}
-
-function getCurrentUser() {
-    if (!isLoggedIn()) return null;
-
-    $db = loadDatabase();
-    foreach ($db['users'] as $user) {
-        if ($user['id'] === $_SESSION['user_id']) {
-            return $user;
-        }
-    }
-    return null;
-}
-
-function getAllUsers() {
-    $db = loadDatabase();
-    return array_map(function($user) {
-        return array_diff_key($user, array_flip(['password']));
-    }, $db['users']);
-}
-
-function getUserPosts($user_id) {
-    $db = loadDatabase();
-    foreach ($db['users'] as $user) {
-        if ($user['id'] === $user_id && isset($user['posts'])) {
-            return $user['posts'];
-        }
-    }
-    return [];
-}
-
-function getUserIdeas($user_id) {
-    $db = loadDatabase();
-    foreach ($db['users'] as $user) {
-        if ($user['id'] === $user_id && isset($user['ideas'])) {
-            return $user['ideas'];
-        }
-    }
-    return [];
-}
+// Initialize database and auth
+$db = new Database();
+$auth = new Auth($db);
 
 // Handle user profile page
 if (isset($_GET['user_id'])) {
     $user_id = $_GET['user_id'];
-    $db = loadDatabase();
+    $user_data = $db->getUserById($user_id);
 
-    foreach ($db['users'] as $user) {
-        if ($user['id'] === $user_id) {
-            $user_data = array_diff_key($user, array_flip(['password']));
-            $user_posts = getUserPosts($user_id);
-            $user_ideas = getUserIdeas($user_id);
+    if ($user_data) {
+        // Remove password from user data for security
+        unset($user_data['password']);
+        $user_posts = $db->getUserPosts($user_id);
+        $user_ideas = $db->getIdeas();
 
-            include 'user-profile.php';
-            exit;
-        }
+        // Filter ideas by user
+        $user_ideas = array_filter($user_ideas, function($idea) use ($user_id) {
+            return $idea['user_id'] === $user_id;
+        });
+
+        include 'user-profile.php';
+        exit;
     }
 
     // User not found
