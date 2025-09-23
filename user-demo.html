@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أحمد محمد - أنت صاحب المنصة</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .user-profile {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #667eea;
+        }
+        .profile-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+        }
+        .profile-info .role {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        .profile-info .bio {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .stat {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+        .content-image {
+            height: 200px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        .content-info {
+            padding: 20px;
+        }
+        .content-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .content-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .content-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .content-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        .activity-timeline {
+            margin-top: 40px;
+        }
+        .activity-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 0 10px 10px 0;
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        .activity-content h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .activity-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .skills-section {
+            margin-top: 40px;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .skill-item {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .skill-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .stats {
+                justify-content: center;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">أنت صاحب المنصة</div>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="content.html">المحتوى</a></li>
+                <li><a href="forum.html">المنتدى</a></li>
+                <li><a href="initiatives.html">المبادرات</a></li>
+                <li><a href="contact.html">اتصل بنا</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="user-profile">
+        <div class="profile-header">
+            <div class="profile-avatar">👨‍💼</div>
+            <div class="profile-info">
+                <h1>أحمد محمد</h1>
+                <div class="role">مدرب تطوير ذاتي وخبير في القيادة</div>
+                <div class="bio">
+                    أؤمن بأن كل شخص يمتلك القدرة على تحقيق أحلامه. أشارك خبراتي في التطوير الشخصي والقيادة لمساعدة الآخرين على اكتشاف إمكانياتهم الكاملة.
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number">47</span>
+                <span class="stat-label">منشور</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">1,234</span>
+                <span class="stat-label">متابع</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">89</span>
+                <span class="stat-label">إعجاب</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">156</span>
+                <span class="stat-label">تعليق</span>
+            </div>
+        </div>
+
+        <div class="skills-section">
+            <h2>المهارات والخبرات</h2>
+            <div class="skills-grid">
+                <div class="skill-item">تطوير شخصي</div>
+                <div class="skill-item">القيادة</div>
+                <div class="skill-item">إدارة الوقت</div>
+                <div class="skill-item">التواصل الفعال</div>
+                <div class="skill-item">التخطيط الاستراتيجي</div>
+                <div class="skill-item">التنمية البشرية</div>
+                <div class="skill-item">التدريب والتطوير</div>
+                <div class="skill-item">الذكاء العاطفي</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="content-card">
+                <div class="content-image">📈</div>
+                <div class="content-info">
+                    <h3 class="content-title">كيف تحدد أهدافك بذكاء؟</h3>
+                    <div class="content-meta">
+                        <span>📅 15 سبتمبر 2024</span>
+                        <span>👁️ 234 مشاهدة</span>
+                    </div>
+                    <div class="content-description">
+                        دليل شامل لتحديد الأهداف الذكية وتحويلها إلى خطة عملية قابلة للتنفيذ. تعلم كيف تحدد أهدافك بطريقة SMART.
+                    </div>
+                    <div class="content-actions">
+                        <a href="#" class="btn btn-primary">قراءة المقال</a>
+                        <a href="#" class="btn btn-secondary">مشاركة</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="content-image">🎯</div>
+                <div class="content-info">
+                    <h3 class="content-title">فن التواصل الفعال في العمل</h3>
+                    <div class="content-meta">
+                        <span>📅 12 سبتمبر 2024</span>
+                        <span>👁️ 189 مشاهدة</span>
+                    </div>
+                    <div class="content-description">
+                        اكتشف أسرار التواصل الفعال وكيف يمكن أن يحسن من أدائك المهني وعلاقاتك في بيئة العمل.
+                    </div>
+                    <div class="content-actions">
+                        <a href="#" class="btn btn-primary">قراءة المقال</a>
+                        <a href="#" class="btn btn-secondary">مشاركة</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="content-image">⚡</div>
+                <div class="content-info">
+                    <h3 class="content-title">إدارة الوقت بفعالية</h3>
+                    <div class="content-meta">
+                        <span>📅 8 سبتمبر 2024</span>
+                        <span>👁️ 312 مشاهدة</span>
+                    </div>
+                    <div class="content-description">
+                        تقنيات عملية لإدارة الوقت وتحقيق أقصى استفادة من يومك. تعلم كيف تنظم أولوياتك وتزيد من إنتاجيتك.
+                    </div>
+                    <div class="content-actions">
+                        <a href="#" class="btn btn-primary">قراءة المقال</a>
+                        <a href="#" class="btn btn-secondary">مشاركة</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="content-image">🚀</div>
+                <div class="content-info">
+                    <h3 class="content-title">رحلة النجاح الشخصي</h3>
+                    <div class="content-meta">
+                        <span>📅 5 سبتمبر 2024</span>
+                        <span>👁️ 445 مشاهدة</span>
+                    </div>
+                    <div class="content-description">
+                        قصة ملهمة عن رحلة النجاح الشخصي وكيف يمكن للإصرار والمثابرة أن يغيرا حياتك بالكامل.
+                    </div>
+                    <div class="content-actions">
+                        <a href="#" class="btn btn-primary">قراءة المقال</a>
+                        <a href="#" class="btn btn-secondary">مشاركة</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity-timeline">
+            <h2>النشاطات الأخيرة</h2>
+
+            <div class="activity-item">
+                <div class="activity-icon">📝</div>
+                <div class="activity-content">
+                    <h4>نشر مقال جديد: "كيف تحدد أهدافك بذكاء؟"</h4>
+                    <div class="activity-time">منذ 3 أيام</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">💬</div>
+                <div class="activity-content">
+                    <h4>رد على تعليق في "فن التواصل الفعال"</h4>
+                    <div class="activity-time">منذ 5 أيام</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">❤️</div>
+                <div class="activity-content">
+                    <h4>تم الإعجاب بمنشور "رحلة النجاح الشخصي"</h4>
+                    <div class="activity-time">منذ أسبوع</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">🔄</div>
+                <div class="activity-content">
+                    <h4>مشاركة منشور "إدارة الوقت بفعالية"</h4>
+                    <div class="activity-time">منذ أسبوعين</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // إضافة تفاعلية للأزرار
+        document.addEventListener('DOMContentLoaded', function() {
+            // إضافة عدادات متحركة للإحصائيات
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach(stat => {
+                const target = parseInt(stat.textContent);
+                let current = 0;
+                const increment = target / 50;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = Math.floor(current);
+                }, 30);
+            });
+
+            // إضافة تأثيرات hover للبطاقات
+            const cards = document.querySelectorAll('.content-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // إضافة تفاعل للمهارات
+            const skills = document.querySelectorAll('.skill-item');
+            skills.forEach(skill => {
+                skill.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

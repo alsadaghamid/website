@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أنت صاحب المنصة - منصة التطوير والتواصل</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .demo-homepage {
+            min-height: 100vh;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-title {
+            font-size: 4em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .hero-subtitle {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .cta-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 200px;
+        }
+        .cta-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+        .cta-primary:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+        .cta-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .cta-secondary:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+        }
+        .stats-section {
+            padding: 60px 20px;
+            background: #f8f9fa;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .stat-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .features-section {
+            padding: 80px 20px;
+            background: white;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #333;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .feature-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .feature-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        .content-showcase {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .showcase-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .showcase-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .showcase-image {
+            height: 200px;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+        }
+        .showcase-content {
+            padding: 25px;
+        }
+        .showcase-title {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .showcase-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .showcase-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .showcase-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+        }
+        .testimonials-section {
+            padding: 80px 20px;
+            background: white;
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .testimonial-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .testimonial-quote {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .testimonial-info h4 {
+            margin: 0;
+            color: #333;
+        }
+        .testimonial-info p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .cta-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .cta-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .cta-description {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5em;
+            }
+            .hero-subtitle {
+                font-size: 1.2em;
+            }
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            .cta-button {
+                width: 100%;
+                max-width: 300px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .showcase-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-title {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">أنت صاحب المنصة</div>
+            <ul>
+                <li><a href="index-demo.html">الرئيسية التفاعلية</a></li>
+                <li><a href="content-demo.html">المحتوى المُشارك</a></li>
+                <li><a href="user-demo.html">ملف أحمد محمد</a></li>
+                <li><a href="forum-demo.html">المنتدى التفاعلي</a></li>
+                <li><a href="contact.html">اتصل بنا</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="demo-homepage">
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">أنت صاحب المنصة</h1>
+                <p class="hero-subtitle">
+                    منصة تفاعلية شاملة لمشاركة المعرفة والخبرات.
+                    انضم لمجتمعنا وابدأ رحلتك نحو التميز والتطور المستمر.
+                </p>
+                <div class="hero-cta">
+                    <a href="user-demo.html" class="cta-button cta-primary">اكتشف الملفات الشخصية</a>
+                    <a href="content-demo.html" class="cta-button cta-secondary">استعرض المحتوى</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">👥</span>
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">مستخدم نشط</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📝</span>
+                    <div class="stat-number">15,420</div>
+                    <div class="stat-label">منشور مُشارك</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💬</span>
+                    <div class="stat-number">89,543</div>
+                    <div class="stat-label">تفاعل وتعليق</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⭐</span>
+                    <div class="stat-number">94%</div>
+                    <div class="stat-label">رضا المستخدمين</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <h2 class="section-title">مميزات المنصة</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <h3 class="feature-title">أداء سريع ومُحسن</h3>
+                    <p class="feature-description">
+                        منصة سريعة الاستجابة تعمل بكفاءة عالية على جميع الأجهزة.
+                        تم تحسين الأداء لتوفير تجربة مستخدم سلسة وسريعة.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="feature-title">أمان وحماية متقدمة</h3>
+                    <p class="feature-description">
+                        نظام أمان شامل يحمي بياناتك ويضمن خصوصيتك.
+                        تشفير متقدم وإجراءات وقائية من الهجمات الإلكترونية.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📱</span>
+                    <h3 class="feature-title">تصميم متجاوب</h3>
+                    <p class="feature-description">
+                        واجهة مستخدم متجاوبة تعمل بشكل مثالي على جميع الأجهزة.
+                        من الهواتف المحمولة إلى أجهزة الكمبيوتر المكتبية.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🌐</span>
+                    <h3 class="feature-title">دعم كامل للعربية</h3>
+                    <p class="feature-description">
+                        دعم كامل للغة العربية مع تصميم مناسب للقراءة من اليمين إلى اليسار.
+                        تجربة محلية مُحسنة للمستخدمين العرب.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">👥</span>
+                    <h3 class="feature-title">مجتمع تفاعلي</h3>
+                    <p class="feature-description">
+                        مجتمع نشط من المحترفين والمتعلمين.
+                        فرص للتواصل والتعاون وتبادل الخبرات والمعرفة.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">تحليلات مفصلة</h3>
+                    <p class="feature-description">
+                        إحصائيات وتحليلات مفصلة لقياس أدائك وتطورك.
+                        تابع تقدمك وركز على نقاط القوة والتحسين.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-showcase">
+            <h2 class="section-title">محتوى مُشارك من المجتمع</h2>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <div class="showcase-image">📈</div>
+                    <div class="showcase-content">
+                        <h3 class="showcase-title">كيف تحدد أهدافك بذكاء؟</h3>
+                        <div class="showcase-meta">
+                            <span>📅 15 سبتمبر 2024</span>
+                            <span>👁️ 234 مشاهدة</span>
+                        </div>
+                        <p class="showcase-description">
+                            دليل شامل لتحديد الأهداف الذكية وتحويلها إلى خطة عملية قابلة للتنفيذ.
+                        </p>
+                        <div class="showcase-author">
+                            <div class="author-avatar">👨‍💼</div>
+                            <span>أحمد محمد</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <div class="showcase-image">🎯</div>
+                    <div class="showcase-content">
+                        <h3 class="showcase-title">فن التواصل الفعال في العمل</h3>
+                        <div class="showcase-meta">
+                            <span>📅 12 سبتمبر 2024</span>
+                            <span>👁️ 189 مشاهدة</span>
+                        </div>
+                        <p class="showcase-description">
+                            اكتشف أسرار التواصل الفعال وكيف يمكن أن يحسن من أدائك المهني.
+                        </p>
+                        <div class="showcase-author">
+                            <div class="author-avatar">👩‍🎓</div>
+                            <span>فاطمة أحمد</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <div class="showcase-image">⚡</div>
+                    <div class="showcase-content">
+                        <h3 class="showcase-title">إدارة الوقت بفعالية</h3>
+                        <div class="showcase-meta">
+                            <span>📅 8 سبتمبر 2024</span>
+                            <span>👁️ 312 مشاهدة</span>
+                        </div>
+                        <p class="showcase-description">
+                            تقنيات عملية لإدارة الوقت وتحقيق أقصى استفادة من يومك.
+                        </p>
+                        <div class="showcase-author">
+                            <div class="author-avatar">👨‍🎓</div>
+                            <span>محمد علي</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials-section">
+            <h2 class="section-title">آراء المستخدمين</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        "المنصة غيرت طريقة تفكيري في التطوير الذاتي. المحتوى المُشارك من المستخدمين رائع والمجتمع داعم جداً!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨‍💻</div>
+                        <div class="testimonial-info">
+                            <h4>علي حسن</h4>
+                            <p>مطور برمجيات</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        "أفضل منصة عربية للتطوير الشخصي. التصميم جميل والأداء سريع والمحتوى مُفيد جداً."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩‍🎨</div>
+                        <div class="testimonial-info">
+                            <h4>نورة سعد</h4>
+                            <p>مصممة جرافيك</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        "المنصة ساعدتني في بناء شبكة علاقات قوية ساعدتني في تطوير مشروعي الخاص والحصول على عملاء جدد."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩‍🚀</div>
+                        <div class="testimonial-info">
+                            <h4>سارة خالد</h4>
+                            <p>رائدة أعمال</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2 class="cta-title">ابدأ رحلتك الآن!</h2>
+            <p class="cta-description">
+                انضم لمجتمعنا وابدأ في مشاركة خبراتك وتطوير مهاراتك مع آلاف المستخدمين النشطين.
+            </p>
+            <div class="cta-buttons">
+                <a href="user-demo.html" class="cta-button cta-primary">استعرض الملفات الشخصية</a>
+                <a href="forum-demo.html" class="cta-button cta-secondary">انضم للمنتدى</a>
+                <a href="content-demo.html" class="cta-button cta-secondary">اكتشف المحتوى</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // إضافة عدادات متحركة للإحصائيات
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.textContent.replace(/,/g, ''));
+                let current = 0;
+                const increment = target / 100;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = Math.floor(current).toLocaleString();
+                }, 20);
+            });
+
+            // إضافة تأثيرات التمرير
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            // تطبيق التأثيرات على العناصر
+            const animatedElements = document.querySelectorAll('.feature-card, .showcase-item, .testimonial-card');
+            animatedElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                element.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                observer.observe(element);
+            });
+
+            // إضافة تفاعل للأزرار
+            const ctaButtons = document.querySelectorAll('.cta-button');
+            ctaButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // إضافة تأثير النبض
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // إضافة تأثير الطباعة للعنوان الرئيسي
+            const heroTitle = document.querySelector('.hero-title');
+            const originalText = heroTitle.textContent;
+            heroTitle.textContent = '';
+
+            let i = 0;
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    heroTitle.textContent += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            };
+
+            setTimeout(typeWriter, 500);
+        });
+    </script>
+</body>
+</html>

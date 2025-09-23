@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحتوى المُشارك - أنت صاحب المنصة</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .content-demo {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+        .hero-title {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .hero-subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .content-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .content-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .content-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .content-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .content-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .content-category {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .content-title {
+            font-size: 1.4em;
+            margin: 10px 0;
+            color: #333;
+        }
+        .content-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+        }
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+        }
+        .content-preview {
+            padding: 20px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .content-image-placeholder {
+            height: 200px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+        }
+        .content-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-stats {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .content-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        .like-btn {
+            background: #e9ecef;
+            color: #666;
+        }
+        .like-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        .share-btn {
+            background: #e9ecef;
+            color: #666;
+        }
+        .share-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .featured-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+        .featured-title {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .featured-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .featured-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .featured-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+        .user-stories {
+            margin-top: 40px;
+        }
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .story-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .story-card:hover {
+            transform: translateY(-5px);
+        }
+        .story-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .story-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .story-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .story-role {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .story-content {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .story-impact {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid #667eea;
+        }
+        .impact-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .impact-description {
+            color: #666;
+            font-size: 0.9em;
+        }
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2em;
+            }
+            .content-showcase {
+                grid-template-columns: 1fr;
+            }
+            .content-filters {
+                justify-content: center;
+            }
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">أنت صاحب المنصة</div>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="content-demo.html">المحتوى المُشارك</a></li>
+                <li><a href="user-demo.html">ملف أحمد محمد</a></li>
+                <li><a href="forum.html">المنتدى</a></li>
+                <li><a href="contact.html">اتصل بنا</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="content-demo">
+        <div class="hero-section">
+            <h1 class="hero-title">المحتوى المُشارك</h1>
+            <p class="hero-subtitle">اكتشف القصص الملهمة والخبرات المُشاركة من مجتمعنا</p>
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <span class="stat-number">1,247</span>
+                    <span class="stat-label">منشور مُشارك</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">89</span>
+                    <span class="stat-label">مستخدم نشط</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">15,420</span>
+                    <span class="stat-label">تفاعل</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">94%</span>
+                    <span class="stat-label">رضا المستخدمين</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-filters">
+            <button class="filter-btn active" data-category="all">الكل</button>
+            <button class="filter-btn" data-category="motivation">تحفيز</button>
+            <button class="filter-btn" data-category="leadership">قيادة</button>
+            <button class="filter-btn" data-category="development">تنمية</button>
+            <button class="filter-btn" data-category="success">نجاح</button>
+            <button class="filter-btn" data-category="education">تعليم</button>
+        </div>
+
+        <div class="featured-content">
+            <h2 class="featured-title">المحتوى المُميز هذا الأسبوع</h2>
+            <p class="featured-description">
+                "رحلة التحول: من موظف عادي إلى رائد أعمال ناجح" - قصة ملهمة من أحمد محمد تكشف عن أسرار النجاح في عالم الأعمال وكيف يمكن للإصرار أن يغير حياتك بالكامل.
+            </p>
+            <div class="featured-author">
+                <div class="featured-avatar">👨‍💼</div>
+                <div>
+                    <h3>أحمد محمد</h3>
+                    <p>مدرب تطوير ذاتي وخبير في القيادة</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-showcase">
+            <div class="content-item" data-category="motivation">
+                <div class="content-header">
+                    <span class="content-category">تحفيز</span>
+                    <h3 class="content-title">كيف تتخلص من التسويف وتبدأ في تحقيق أحلامك؟</h3>
+                    <div class="content-author">
+                        <div class="author-avatar">👩‍🎓</div>
+                        <span>فاطمة أحمد - خبيرة في التنمية البشرية</span>
+                    </div>
+                </div>
+                <div class="content-image-placeholder">🎯</div>
+                <div class="content-preview">
+                    التسويف هو العدو الأكبر للنجاح. في هذا المقال، سنكتشف معاً أهم الطرق العلمية والعملية للتخلص من التسويف وبناء عادات إيجابية تساعدك على تحقيق أهدافك...
+                </div>
+                <div class="content-footer">
+                    <div class="content-stats">
+                        <span>📅 منذ 3 أيام</span>
+                        <span>👁️ 1,234 مشاهدة</span>
+                        <span>❤️ 89 إعجاب</span>
+                        <span>💬 23 تعليق</span>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn like-btn">❤️ إعجاب</button>
+                        <button class="action-btn share-btn">📤 مشاركة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-item" data-category="leadership">
+                <div class="content-header">
+                    <span class="content-category">قيادة</span>
+                    <h3 class="content-title">القيادة في العصر الرقمي: تحديات وفرص</h3>
+                    <div class="content-author">
+                        <div class="author-avatar">👨‍💼</div>
+                        <span>أحمد محمد - مدرب قيادة</span>
+                    </div>
+                </div>
+                <div class="content-image-placeholder">🚀</div>
+                <div class="content-preview">
+                    في عالم يتغير بسرعة فائقة، أصبحت القيادة الرقمية ضرورة حتمية. تعلم كيف تطور مهاراتك القيادية لتواكب التحديات الجديدة وتستغل الفرص المتاحة...
+                </div>
+                <div class="content-footer">
+                    <div class="content-stats">
+                        <span>📅 منذ أسبوع</span>
+                        <span>👁️ 2,156 مشاهدة</span>
+                        <span>❤️ 156 إعجاب</span>
+                        <span>💬 45 تعليق</span>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn like-btn">❤️ إعجاب</button>
+                        <button class="action-btn share-btn">📤 مشاركة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-item" data-category="success">
+                <div class="content-header">
+                    <span class="content-category">نجاح</span>
+                    <h3 class="content-title">قصة نجاح: من الصفر إلى القمة في عام واحد</h3>
+                    <div class="content-author">
+                        <div class="author-avatar">👩‍🚀</div>
+                        <span>سارة خالد - رائدة أعمال</span>
+                    </div>
+                </div>
+                <div class="content-image-placeholder">⭐</div>
+                <div class="content-preview">
+                    رحلة ملهمة من فتاة عادية إلى صاحبة شركة ناجحة في أقل من عام. اكتشف الأسرار والدروس المستفادة من هذه التجربة الرائعة...
+                </div>
+                <div class="content-footer">
+                    <div class="content-stats">
+                        <span>📅 منذ 5 أيام</span>
+                        <span>👁️ 3,421 مشاهدة</span>
+                        <span>❤️ 234 إعجاب</span>
+                        <span>💬 67 تعليق</span>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn like-btn">❤️ إعجاب</button>
+                        <button class="action-btn share-btn">📤 مشاركة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-item" data-category="development">
+                <div class="content-header">
+                    <span class="content-category">تنمية</span>
+                    <h3 class="content-title">بناء الثقة بالنفس: دليل شامل للمبتدئين</h3>
+                    <div class="content-author">
+                        <div class="author-avatar">👨‍🎓</div>
+                        <span>محمد علي - مدرب تنمية بشرية</span>
+                    </div>
+                </div>
+                <div class="content-image-placeholder">💪</div>
+                <div class="content-preview">
+                    الثقة بالنفس هي أساس النجاح في أي مجال. تعلم كيف تبني ثقتك بنفسك خطوة بخطوة من خلال تمارين عملية ونصائح مثبتة علمياً...
+                </div>
+                <div class="content-footer">
+                    <div class="content-stats">
+                        <span>📅 منذ يومين</span>
+                        <span>👁️ 987 مشاهدة</span>
+                        <span>❤️ 78 إعجاب</span>
+                        <span>💬 34 تعليق</span>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn like-btn">❤️ إعجاب</button>
+                        <button class="action-btn share-btn">📤 مشاركة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-item" data-category="education">
+                <div class="content-header">
+                    <span class="content-category">تعليم</span>
+                    <h3 class="content-title">تعلم البرمجة في 30 يوماً: دليل المبتدئين</h3>
+                    <div class="content-author">
+                        <div class="author-avatar">👨‍💻</div>
+                        <span>علي حسن - مطور برمجيات</span>
+                    </div>
+                </div>
+                <div class="content-image-placeholder">💻</div>
+                <div class="content-preview">
+                    هل تحلم بتعلم البرمجة؟ في هذا الدليل المفصل، سنأخذك في رحلة 30 يوماً لإتقان أساسيات البرمجة مع مشاريع عملية وتمارين تفاعلية...
+                </div>
+                <div class="content-footer">
+                    <div class="content-stats">
+                        <span>📅 منذ 4 أيام</span>
+                        <span>👁️ 1,567 مشاهدة</span>
+                        <span>❤️ 123 إعجاب</span>
+                        <span>💬 56 تعليق</span>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn like-btn">❤️ إعجاب</button>
+                        <button class="action-btn share-btn">📤 مشاركة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-item" data-category="motivation">
+                <div class="content-header">
+                    <span class="content-category">تحفيز</span>
+                    <h3 class="content-title">الصباح المبكر: سر المنتجين الناجحين</h3>
+                    <div class="content-author">
+                        <div class="author-avatar">👩‍💼</div>
+                        <span>لينا محمد - مدربة إنتاجية</span>
+                    </div>
+                </div>
+                <div class="content-image-placeholder">🌅</div>
+                <div class="content-preview">
+                    كيف يبدأ الأشخاص الناجحون يومهم؟ اكتشف روتين الصباح الذي يتبعه المنتجون الناجحون وكيف يمكنك تطبيقه في حياتك اليومية...
+                </div>
+                <div class="content-footer">
+                    <div class="content-stats">
+                        <span>📅 منذ أسبوع</span>
+                        <span>👁️ 756 مشاهدة</span>
+                        <span>❤️ 67 إعجاب</span>
+                        <span>💬 23 تعليق</span>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn like-btn">❤️ إعجاب</button>
+                        <button class="action-btn share-btn">📤 مشاركة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-stories">
+            <h2>قصص مستخدمين ملهمة</h2>
+            <div class="story-grid">
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">👨‍🎓</div>
+                        <div>
+                            <div class="story-name">خالد أحمد</div>
+                            <div class="story-role">طالب جامعي</div>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        "بفضل المنصة، تعلمت كيف أطور مهاراتي في البرمجة. الآن أعمل كمطور في شركة تقنية كبيرة!"
+                    </div>
+                    <div class="story-impact">
+                        <div class="impact-title">التأثير:</div>
+                        <div class="impact-description">تحول من طالب إلى مطور محترف في 6 أشهر</div>
+                    </div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">👩‍🎨</div>
+                        <div>
+                            <div class="story-name">نورة سعد</div>
+                            <div class="story-role">مصممة جرافيك</div>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        "المنصة ساعدتني في بناء شبكة علاقات قوية ساعدتني في تطوير مشروعي الخاص والحصول على عملاء جدد."
+                    </div>
+                    <div class="story-impact">
+                        <div class="impact-title">التأثير:</div>
+                        <div class="impact-description">زيادة الدخل بنسبة 300% في عام واحد</div>
+                    </div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">👨‍🏫</div>
+                        <div>
+                            <div class="story-name">د. محمد علي</div>
+                            <div class="story-role">أستاذ جامعي</div>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        "أشارك خبراتي في التدريس والتطوير الأكاديمي، والمنصة توفر لي الجمهور المثالي لنقل معرفتي."
+                    </div>
+                    <div class="story-impact">
+                        <div class="impact-title">التأثير:</div>
+                        <div class="impact-description">وصل لأكثر من 10,000 طالب حول العالم</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // نظام الفلترة
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const contentItems = document.querySelectorAll('.content-item');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.dataset.category;
+
+                    // تحديث الأزرار النشطة
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // فلترة المحتوى
+                    contentItems.forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'block';
+                            item.style.animation = 'fadeIn 0.5s ease';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // إضافة تفاعل للأزرار
+            const likeButtons = document.querySelectorAll('.like-btn');
+            const shareButtons = document.querySelectorAll('.share-btn');
+
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const icon = this.textContent.trim();
+                    if (icon === '❤️ إعجاب') {
+                        this.innerHTML = '💔 إلغاء الإعجاب';
+                        this.style.background = '#ff6b6b';
+                        this.style.color = 'white';
+                    } else {
+                        this.innerHTML = '❤️ إعجاب';
+                        this.style.background = '#e9ecef';
+                        this.style.color = '#666';
+                    }
+                });
+            });
+
+            shareButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'محتوى مُشارك',
+                            text: 'اطلع على هذا المحتوى المميز',
+                            url: window.location.href
+                        });
+                    } else {
+                        // نسخ الرابط للحافظة
+                        navigator.clipboard.writeText(window.location.href);
+                        alert('تم نسخ الرابط!');
+                    }
+                });
+            });
+
+            // إضافة تأثيرات التحميل
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            contentItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>

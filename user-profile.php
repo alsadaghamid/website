@@ -1,5 +1,12 @@
 <?php
 // This file is included by users.php when viewing a specific user profile
+
+// Check if required variables are set (when accessed directly)
+if (!isset($user_data) || !isset($user_posts) || !isset($user_ideas)) {
+    // Redirect to users page if accessed directly without proper data
+    header('Location: users.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء وسائط متعددة - أنت صاحب المنصة</title>
+    <meta name="description" content="أنشئ وشارك مختلف أنواع الوسائط: صوت، فيديو، صور، مستندات، وأغاني في منصة أنت صاحب المنصة">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://embed.tawk.to; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; frame-src https://www.youtube.com https://www.facebook.com; img-src * data:;">
+    <meta name="theme-color" content="#1e3a8a">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.svg" alt="أنت صاحب المنصة" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="logo-text" style="display: none;">أنت صاحب المنصة</span>
+            </div>
+            <div class="nav-controls">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="ابحث في الوسائط..." id="media-search">
+                    <button class="search-btn" onclick="searchMedia()" title="بحث">
+                        <span class="search-icon">🔍</span>
+                    </button>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع المظلم/الفاتح">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="content.html">المحتوى</a></li>
+                <li><a href="forum.html">المنتدى</a></li>
+                <li><a href="initiatives.html">المبادرات</a></li>
+                <li><a href="#" onclick="showAuthModal()">الملف الشخصي</a></li>
+                <li><a href="media.html" class="active">الوسائط</a></li>
+                <li><a href="contact.html">تواصل معنا</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="media-hero">
+            <div class="container">
+                <h1>إنشاء وسائط متعددة</h1>
+                <p>شارك صوتك، فيديوهاتك، صورك، ومستنداتك مع مجتمع أنت صاحب المنصة</p>
+                <div class="media-type-selector">
+                    <button class="media-type-btn active" data-type="all" onclick="filterMedia('all')">
+                        <span>🎵</span> جميع الوسائط
+                    </button>
+                    <button class="media-type-btn" data-type="audio" onclick="filterMedia('audio')">
+                        <span>🎵</span> صوت وأغاني
+                    </button>
+                    <button class="media-type-btn" data-type="video" onclick="filterMedia('video')">
+                        <span>🎥</span> فيديو
+                    </button>
+                    <button class="media-type-btn" data-type="image" onclick="filterMedia('image')">
+                        <span>🖼️</span> صور
+                    </button>
+                    <button class="media-type-btn" data-type="document" onclick="filterMedia('document')">
+                        <span>📄</span> مستندات
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="media-upload-section">
+            <div class="container">
+                <div class="upload-controls">
+                    <button class="btn-create-media" onclick="showMediaUploadModal()">
+                        <span>➕</span> إنشاء وسائط جديدة
+                    </button>
+                    <div class="upload-filters">
+                        <select id="media-category-filter" onchange="filterMediaByCategory()">
+                            <option value="all">جميع الفئات</option>
+                            <option value="education">تعليم</option>
+                            <option value="entertainment">ترفيه</option>
+                            <option value="motivation">تحفيز</option>
+                            <option value="news">أخبار</option>
+                            <option value="personal">شخصي</option>
+                        </select>
+                        <select id="media-sort-filter" onchange="sortMedia()">
+                            <option value="newest">الأحدث</option>
+                            <option value="oldest">الأقدم</option>
+                            <option value="popular">الأكثر شعبية</option>
+                            <option value="title">الاسم</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="media-grid" id="media-grid">
+                    <!-- Media items will be loaded here -->
+                </div>
+
+                <div class="loading-indicator" id="media-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>جاري تحميل الوسائط...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-media">
+            <div class="container">
+                <h2>وسائط مميزة</h2>
+                <div class="featured-grid">
+                    <div class="featured-item">
+                        <div class="featured-icon">🎵</div>
+                        <h3>أغاني تحفيزية</h3>
+                        <p>مجموعة من الأغاني المحفزة لتعزيز إنتاجيتك</p>
+                        <button class="btn-secondary" onclick="showMediaTypeModal('audio')">استكشف</button>
+                    </div>
+                    <div class="featured-item">
+                        <div class="featured-icon">🎥</div>
+                        <h3>فيديوهات تعليمية</h3>
+                        <p>دروس ومحاضرات في مختلف المجالات</p>
+                        <button class="btn-secondary" onclick="showMediaTypeModal('video')">استكشف</button>
+                    </div>
+                    <div class="featured-item">
+                        <div class="featured-icon">📸</div>
+                        <h3>صور إلهامية</h3>
+                        <p>صور تحفيزية وإلهامية ليومك</p>
+                        <button class="btn-secondary" onclick="showMediaTypeModal('image')">استكشف</button>
+                    </div>
+                    <div class="featured-item">
+                        <div class="featured-icon">📚</div>
+                        <h3>مستندات مفيدة</h3>
+                        <p>كتب ومستندات في التطوير الذاتي</p>
+                        <button class="btn-secondary" onclick="showMediaTypeModal('document')">استكشف</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 أنت صاحب المنصة. جميع الحقوق محفوظة. | <a href="contact.html">تواصل معنا</a></p>
+        <div class="social-links">
+            <a href="https://www.youtube.com/@OwnThePlatform" title="يوتيوب - أنت صاحب المنصة">
+                <span class="social-icon">📺</span>
+                <span class="social-text">يوتيوب</span>
+            </a>
+            <a href="https://tiktok.com/@youownerplatform" title="تيك توك - أنت صاحب المنصة">
+                <span class="social-icon">🎵</span>
+                <span class="social-text">تيك توك</span>
+            </a>
+            <a href="https://www.facebook.com/share/1CkQRaaNB9/" title="فيسبوك - أنت صاحب المنصة">
+                <span class="social-icon">📘</span>
+                <span class="social-text">فيسبوك</span>
+            </a>
+            <a href="https://wa.me/message/QTLJ4LOSGZKJG1" title="واتساب - أنت صاحب المنصة">
+                <span class="social-icon">💬</span>
+                <span class="social-text">واتساب</span>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Media Upload Modal -->
+    <div class="media-upload-modal" id="media-upload-modal" style="display: none;">
+        <div class="media-upload-container">
+            <div class="media-upload-header">
+                <h2>إنشاء وسائط جديدة</h2>
+                <button class="media-upload-close" onclick="closeMediaUploadModal()">×</button>
+            </div>
+            <div class="media-type-tabs">
+                <button class="media-tab active" data-type="audio" onclick="switchMediaTab('audio')">
+                    <span>🎵</span> صوت وأغاني
+                </button>
+                <button class="media-tab" data-type="video" onclick="switchMediaTab('video')">
+                    <span>🎥</span> فيديو
+                </button>
+                <button class="media-tab" data-type="image" onclick="switchMediaTab('image')">
+                    <span>🖼️</span> صور
+                </button>
+                <button class="media-tab" data-type="document" onclick="switchMediaTab('document')">
+                    <span>📄</span> مستندات
+                </button>
+            </div>
+            <div class="media-upload-content">
+                <!-- Audio Upload Form -->
+                <div class="media-form" id="audio-form" style="display: block;">
+                    <div class="form-group">
+                        <label for="audio-title">عنوان الصوت</label>
+                        <input type="text" id="audio-title" placeholder="أدخل عنوان الصوت أو الأغنية">
+                    </div>
+                    <div class="form-group">
+                        <label for="audio-artist">الفنان/المنشئ</label>
+                        <input type="text" id="audio-artist" placeholder="اسم الفنان أو المنشئ">
+                    </div>
+                    <div class="form-group">
+                        <label for="audio-file">ملف الصوت</label>
+                        <input type="file" id="audio-file" accept="audio/*">
+                        <p class="form-hint">يدعم: MP3, WAV, M4A (حد أقصى 50MB)</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="audio-description">وصف الصوت</label>
+                        <textarea id="audio-description" rows="3" placeholder="اكتب وصفاً للصوت أو الأغنية"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="audio-category">الفئة</label>
+                        <select id="audio-category">
+                            <option value="motivation">تحفيز</option>
+                            <option value="education">تعليم</option>
+                            <option value="entertainment">ترفيه</option>
+                            <option value="personal">شخصي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="audio-featured">
+                            وسائط مميزة
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Video Upload Form -->
+                <div class="media-form" id="video-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="video-title">عنوان الفيديو</label>
+                        <input type="text" id="video-title" placeholder="أدخل عنوان الفيديو">
+                    </div>
+                    <div class="form-group">
+                        <label for="video-url">رابط الفيديو</label>
+                        <input type="url" id="video-url" placeholder="أدخل رابط الفيديو من يوتيوب أو غيره">
+                        <p class="form-hint">يدعم: يوتيوب، فيميو، وروابط مباشرة</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="video-description">وصف الفيديو</label>
+                        <textarea id="video-description" rows="3" placeholder="اكتب وصفاً للفيديو"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="video-category">الفئة</label>
+                        <select id="video-category">
+                            <option value="education">تعليم</option>
+                            <option value="motivation">تحفيز</option>
+                            <option value="entertainment">ترفيه</option>
+                            <option value="news">أخبار</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="video-thumbnail">صورة مصغرة (اختياري)</label>
+                        <input type="file" id="video-thumbnail" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Image Upload Form -->
+                <div class="media-form" id="image-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="image-title">عنوان الصورة</label>
+                        <input type="text" id="image-title" placeholder="أدخل عنوان الصورة">
+                    </div>
+                    <div class="form-group">
+                        <label for="image-file">ملف الصورة</label>
+                        <input type="file" id="image-file" accept="image/*">
+                        <p class="form-hint">يدعم: JPG, PNG, GIF, WebP (حد أقصى 10MB)</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="image-description">وصف الصورة</label>
+                        <textarea id="image-description" rows="3" placeholder="اكتب وصفاً للصورة"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image-category">الفئة</label>
+                        <select id="image-category">
+                            <option value="motivation">تحفيز</option>
+                            <option value="personal">شخصي</option>
+                            <option value="education">تعليم</option>
+                            <option value="entertainment">ترفيه</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="image-featured">
+                            صورة مميزة
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Document Upload Form -->
+                <div class="media-form" id="document-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="document-title">عنوان المستند</label>
+                        <input type="text" id="document-title" placeholder="أدخل عنوان المستند">
+                    </div>
+                    <div class="form-group">
+                        <label for="document-file">ملف المستند</label>
+                        <input type="file" id="document-file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx">
+                        <p class="form-hint">يدعم: PDF, DOC, DOCX, TXT, PPT, PPTX (حد أقصى 25MB)</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="document-description">وصف المستند</label>
+                        <textarea id="document-description" rows="3" placeholder="اكتب وصفاً للمستند"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="document-category">الفئة</label>
+                        <select id="document-category">
+                            <option value="education">تعليم</option>
+                            <option value="motivation">تحفيز</option>
+                            <option value="personal">شخصي</option>
+                            <option value="business">أعمال</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="document-featured">
+                            مستند مميز
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="media-upload-actions">
+                <button type="button" class="btn-secondary" onclick="previewMedia()">معاينة</button>
+                <button type="button" class="btn-primary" onclick="uploadMedia()">نشر الوسائط</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Media Preview Modal -->
+    <div class="media-preview-modal" id="media-preview-modal" style="display: none;">
+        <div class="media-preview-container">
+            <div class="media-preview-header">
+                <h2>معاينة الوسائط</h2>
+                <button class="media-preview-close" onclick="closeMediaPreviewModal()">×</button>
+            </div>
+            <div class="media-preview-content" id="media-preview-content">
+                <!-- Preview content will be inserted here -->
+            </div>
+            <div class="media-preview-actions">
+                <button class="btn-secondary" onclick="editMedia()">تعديل</button>
+                <button class="btn-primary" onclick="publishMedia()">نشر</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

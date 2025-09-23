@@ -1,300 +1,804 @@
 <?php
-session_start();
-header('Content-Type: application/json');
+/**
+ * Modern Authentication System for "أنت صاحب المنصة" Platform
+ * Features: Secure authentication, JWT tokens, rate limiting, CSRF protection
+ */
 
-// Database configuration
-define('DB_FILE', 'users.json');
+// Security headers
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+header('Content-Type: application/json; charset=utf-8');
 
-// Create users database if not exists
-if (!file_exists(DB_FILE)) {
-    file_put_contents(DB_FILE, json_encode(['users' => [], 'sessions' => []]));
-}
+// Error reporting (disable in production)
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
-function loadDatabase() {
-    return json_decode(file_get_contents(DB_FILE), true);
-}
+// Include configuration and classes
+require_once 'config.php';
+require_once 'classes.php';
 
-function saveDatabase($data) {
-    file_put_contents(DB_FILE, json_encode($data, JSON_PRETTY_PRINT));
-}
+// Start session with secure settings
+session_start([
+    'cookie_secure' => isset($_SERVER['HTTPS']),
+    'cookie_httponly' => true,
+    'cookie_samesite' => 'Strict'
+]);
 
-function generateToken() {
-    return bin2hex(random_bytes(32));
-}
-
-function sendResponse($success, $message, $data = null) {
+// Rate limiting
+$rateLimit = new RateLimit();
+if (!$rateLimit->check()) {
+    http_response_code(429);
     echo json_encode([
-        'success' => $success,
-        'message' => $message,
-        'data' => $data
+        'success' => false,
+        'message' => 'تم تجاوز الحد المسموح للطلبات. يرجى المحاولة لاحقاً',
+        'error' => 'RATE_LIMIT_EXCEEDED'
     ]);
     exit;
 }
 
+// CSRF protection
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrfToken = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!validateCSRFToken($csrfToken)) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'message' => 'رمز CSRF غير صحيح',
+            'error' => 'CSRF_TOKEN_INVALID'
+        ]);
+        exit;
+    }
+}
+
+// Database initialization
+$db = new Database();
+$auth = new Auth($db);
+
 // Handle different actions
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
-switch ($action) {
-    case 'register':
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $country_code = trim($_POST['country_code'] ?? '');
-        $password = $_POST['password'] ?? '';
+try {
+    switch ($action) {
+        case 'register':
+            handleRegister($auth, $db);
+            break;
 
-        if (empty($name) || (empty($email) && empty($phone))) {
-            sendResponse(false, 'الاسم والبريد الإلكتروني أو رقم الهاتف مطلوبان');
-        }
+        case 'login':
+            handleLogin($auth, $db);
+            break;
 
-        if (empty($password) || strlen($password) < 6) {
-            sendResponse(false, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-        }
+        case 'logout':
+            handleLogout($auth);
+            break;
 
-        $db = loadDatabase();
+        case 'refresh_token':
+            handleRefreshToken($auth);
+            break;
 
-        // Check if user already exists
-        foreach ($db['users'] as $user) {
-            if ($user['email'] === $email || $user['phone'] === $phone) {
-                sendResponse(false, 'المستخدم موجود بالفعل');
-            }
-        }
+        case 'get_profile':
+            handleGetProfile($auth);
+            break;
 
-        // Create new user
-        $user_id = uniqid('user_');
-        $new_user = [
-            'id' => $user_id,
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'country_code' => $country_code,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
-            'avatar' => '👤',
-            'bio' => '',
-            'join_date' => date('Y-m-d H:i:s'),
-            'is_active' => true,
-            'posts' => [],
-            'ideas' => []
-        ];
+        case 'update_profile':
+            handleUpdateProfile($auth, $db);
+            break;
 
-        $db['users'][] = $new_user;
-        saveDatabase($db);
+        case 'change_password':
+            handleChangePassword($auth, $db);
+            break;
 
-        // Auto login
-        $_SESSION['user_id'] = $user_id;
-        $db['sessions'][$user_id] = [
-            'token' => generateToken(),
-            'login_time' => date('Y-m-d H:i:s')
-        ];
-        saveDatabase($db);
+        case 'forgot_password':
+            handleForgotPassword($db);
+            break;
 
-        sendResponse(true, 'تم إنشاء الحساب بنجاح', [
-            'user' => array_diff_key($new_user, array_flip(['password'])),
-            'token' => $db['sessions'][$user_id]['token']
-        ]);
+        case 'reset_password':
+            handleResetPassword($auth, $db);
+            break;
 
-    case 'login':
-        $login = trim($_POST['login'] ?? '');
-        $password = $_POST['password'] ?? '';
+        case 'verify_email':
+            handleVerifyEmail($auth, $db);
+            break;
 
-        if (empty($login) || empty($password)) {
-            sendResponse(false, 'بيانات تسجيل الدخول غير مكتملة');
-        }
+        case 'add_post':
+            handleAddPost($auth, $db);
+            break;
 
-        $db = loadDatabase();
-        $user = null;
+        case 'get_posts':
+            handleGetPosts($db);
+            break;
 
-        // Find user
-        foreach ($db['users'] as $u) {
-            if (($u['email'] === $login || $u['phone'] === $login) && password_verify($password, $u['password'])) {
-                $user = $u;
-                break;
-            }
-        }
+        case 'get_user_posts':
+            handleGetUserPosts($auth, $db);
+            break;
 
-        if (!$user) {
-            sendResponse(false, 'بيانات تسجيل الدخول غير صحيحة');
-        }
+        case 'update_post':
+            handleUpdatePost($auth, $db);
+            break;
 
-        // Create session
-        $_SESSION['user_id'] = $user['id'];
-        $db['sessions'][$user['id']] = [
-            'token' => generateToken(),
-            'login_time' => date('Y-m-d H:i:s')
-        ];
-        saveDatabase($db);
+        case 'delete_post':
+            handleDeletePost($auth, $db);
+            break;
 
-        sendResponse(true, 'تم تسجيل الدخول بنجاح', [
-            'user' => array_diff_key($user, array_flip(['password'])),
-            'token' => $db['sessions'][$user['id']]['token']
-        ]);
+        case 'like_post':
+            handleLikePost($auth, $db);
+            break;
 
-    case 'logout':
-        $user_id = $_SESSION['user_id'] ?? $_POST['user_id'] ?? '';
-        if ($user_id) {
-            $db = loadDatabase();
-            unset($db['sessions'][$user_id]);
-            saveDatabase($db);
-            session_destroy();
-        }
-        sendResponse(true, 'تم تسجيل الخروج بنجاح');
+        case 'add_comment':
+            handleAddComment($auth, $db);
+            break;
 
-    case 'get_profile':
-        $user_id = $_SESSION['user_id'] ?? $_POST['user_id'] ?? '';
-        if (!$user_id) {
-            sendResponse(false, 'غير مصرح لك');
-        }
+        case 'get_comments':
+            handleGetComments($db);
+            break;
 
-        $db = loadDatabase();
-        foreach ($db['users'] as $user) {
-            if ($user['id'] === $user_id) {
-                sendResponse(true, 'تم جلب بيانات الملف الشخصي', array_diff_key($user, array_flip(['password'])));
-            }
-        }
-        sendResponse(false, 'المستخدم غير موجود');
+        case 'add_idea':
+            handleAddIdea($auth, $db);
+            break;
 
-    case 'update_profile':
-        $user_id = $_SESSION['user_id'] ?? '';
-        if (!$user_id) {
-            sendResponse(false, 'غير مصرح لك');
-        }
+        case 'get_ideas':
+            handleGetIdeas($db);
+            break;
 
-        $name = trim($_POST['name'] ?? '');
-        $bio = trim($_POST['bio'] ?? '');
-        $avatar = trim($_POST['avatar'] ?? '👤');
+        case 'vote_idea':
+            handleVoteIdea($auth, $db);
+            break;
 
-        if (empty($name)) {
-            sendResponse(false, 'الاسم مطلوب');
-        }
+        case 'get_users':
+            handleGetUsers($db);
+            break;
 
-        $db = loadDatabase();
-        foreach ($db['users'] as &$user) {
-            if ($user['id'] === $user_id) {
-                $user['name'] = $name;
-                $user['bio'] = $bio;
-                $user['avatar'] = $avatar;
-                saveDatabase($db);
-                sendResponse(true, 'تم تحديث الملف الشخصي', array_diff_key($user, array_flip(['password'])));
-            }
-        }
-        sendResponse(false, 'المستخدم غير موجود');
+        case 'search':
+            handleSearch($db);
+            break;
 
-    case 'add_post':
-        $user_id = $_SESSION['user_id'] ?? '';
-        if (!$user_id) {
-            sendResponse(false, 'غير مصرح لك');
-        }
+        case 'upload_avatar':
+            handleUploadAvatar($auth, $db);
+            break;
 
-        $title = trim($_POST['title'] ?? '');
-        $content = trim($_POST['content'] ?? '');
-        $category = trim($_POST['category'] ?? 'general');
+        case 'get_stats':
+            handleGetStats($db);
+            break;
 
-        if (empty($title) || empty($content)) {
-            sendResponse(false, 'العنوان والمحتوى مطلوبان');
-        }
+        default:
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'إجراء غير معروف',
+                'error' => 'INVALID_ACTION'
+            ]);
+    }
+} catch (Exception $e) {
+    error_log("Auth Error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'حدث خطأ داخلي في الخادم',
+        'error' => 'INTERNAL_ERROR'
+    ]);
+}
 
-        $db = loadDatabase();
-        foreach ($db['users'] as &$user) {
-            if ($user['id'] === $user_id) {
-                $post = [
-                    'id' => uniqid('post_'),
-                    'title' => $title,
-                    'content' => $content,
-                    'category' => $category,
-                    'date' => date('Y-m-d H:i:s'),
-                    'author' => $user['name'],
-                    'likes' => 0,
-                    'comments' => []
-                ];
+/**
+ * Handle user registration
+ */
+function handleRegister($auth, $db) {
+    // Validate input
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
 
-                $user['posts'][] = $post;
-                saveDatabase($db);
-                sendResponse(true, 'تم نشر المحتوى بنجاح', $post);
-            }
-        }
-        sendResponse(false, 'المستخدم غير موجود');
+    if (empty($name) || (empty($email) && empty($phone))) {
+        throw new ValidationException('الاسم والبريد الإلكتروني أو رقم الهاتف مطلوبان');
+    }
 
-    case 'add_idea':
-        $user_id = $_SESSION['user_id'] ?? '';
-        if (!$user_id) {
-            sendResponse(false, 'غير مصرح لك');
-        }
+    if (empty($password) || strlen($password) < 8) {
+        throw new ValidationException('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+    }
 
-        $title = trim($_POST['title'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $category = trim($_POST['category'] ?? 'general');
+    if ($password !== $confirmPassword) {
+        throw new ValidationException('كلمات المرور غير متطابقة');
+    }
 
-        if (empty($title) || empty($description)) {
-            sendResponse(false, 'العنوان والوصف مطلوبان');
-        }
+    // Validate email format
+    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new ValidationException('صيغة البريد الإلكتروني غير صحيحة');
+    }
 
-        $db = loadDatabase();
-        foreach ($db['users'] as &$user) {
-            if ($user['id'] === $user_id) {
-                $idea = [
-                    'id' => uniqid('idea_'),
-                    'title' => $title,
-                    'description' => $description,
-                    'category' => $category,
-                    'date' => date('Y-m-d H:i:s'),
-                    'author' => $user['name'],
-                    'status' => 'pending',
-                    'votes' => 0
-                ];
+    // Validate phone format
+    if ($phone && !preg_match('/^\+?[\d\s\-\(\)]+$/', $phone)) {
+        throw new ValidationException('صيغة رقم الهاتف غير صحيحة');
+    }
 
-                $user['ideas'][] = $idea;
-                saveDatabase($db);
-                sendResponse(true, 'تم مشاركة الفكرة بنجاح', $idea);
-            }
-        }
-        sendResponse(false, 'المستخدم غير موجود');
+    // Check if user already exists
+    if ($email && $db->userExistsByEmail($email)) {
+        throw new ValidationException('البريد الإلكتروني مستخدم بالفعل');
+    }
 
-    case 'get_posts':
-        $db = loadDatabase();
-        $posts = [];
+    if ($phone && $db->userExistsByPhone($phone)) {
+        throw new ValidationException('رقم الهاتف مستخدم بالفعل');
+    }
 
-        foreach ($db['users'] as $user) {
-            if (isset($user['posts']) && is_array($user['posts'])) {
-                foreach ($user['posts'] as $post) {
-                    $posts[] = array_merge($post, ['author_id' => $user['id']]);
-                }
-            }
-        }
+    // Create user
+    $userId = $auth->register($name, $email, $phone, $password);
 
-        // Sort by date
-        usort($posts, function($a, $b) {
-            return strtotime($b['date']) - strtotime($a['date']);
+    // Send verification email
+    if ($email) {
+        $auth->sendVerificationEmail($email);
+    }
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني',
+        'data' => [
+            'user_id' => $userId,
+            'requires_verification' => !empty($email)
+        ]
+    ]);
+}
+
+/**
+ * Handle user login
+ */
+function handleLogin($auth, $db) {
+    $login = trim($_POST['login'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $remember = isset($_POST['remember']);
+
+    if (empty($login) || empty($password)) {
+        throw new ValidationException('بيانات تسجيل الدخول غير مكتملة');
+    }
+
+    $user = $auth->login($login, $password, $remember);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تسجيل الدخول بنجاح',
+        'data' => [
+            'user' => $user,
+            'token' => $_SESSION['token'] ?? null
+        ]
+    ]);
+}
+
+/**
+ * Handle logout
+ */
+function handleLogout($auth) {
+    $auth->logout();
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تسجيل الخروج بنجاح'
+    ]);
+}
+
+/**
+ * Handle token refresh
+ */
+function handleRefreshToken($auth) {
+    $token = $_POST['token'] ?? '';
+    $newToken = $auth->refreshToken($token);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تجديد الرمز بنجاح',
+        'data' => ['token' => $newToken]
+    ]);
+}
+
+/**
+ * Handle get profile
+ */
+function handleGetProfile($auth) {
+    $user = $auth->getCurrentUser();
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب بيانات الملف الشخصي',
+        'data' => $user
+    ]);
+}
+
+/**
+ * Handle profile update
+ */
+function handleUpdateProfile($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $name = trim($_POST['name'] ?? '');
+    $bio = trim($_POST['bio'] ?? '');
+    $avatar = trim($_POST['avatar'] ?? '');
+
+    if (empty($name)) {
+        throw new ValidationException('الاسم مطلوب');
+    }
+
+    $db->updateUserProfile($userId, $name, $bio, $avatar);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تحديث الملف الشخصي بنجاح',
+        'data' => $auth->getCurrentUser()
+    ]);
+}
+
+/**
+ * Handle password change
+ */
+function handleChangePassword($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $currentPassword = $_POST['current_password'] ?? '';
+    $newPassword = $_POST['new_password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+
+    if (empty($currentPassword) || empty($newPassword)) {
+        throw new ValidationException('جميع الحقول مطلوبة');
+    }
+
+    if (strlen($newPassword) < 8) {
+        throw new ValidationException('كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل');
+    }
+
+    if ($newPassword !== $confirmPassword) {
+        throw new ValidationException('كلمات المرور الجديدة غير متطابقة');
+    }
+
+    $auth->changePassword($userId, $currentPassword, $newPassword);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تغيير كلمة المرور بنجاح'
+    ]);
+}
+
+/**
+ * Handle forgot password
+ */
+function handleForgotPassword($db) {
+    $email = trim($_POST['email'] ?? '');
+
+    if (empty($email)) {
+        throw new ValidationException('البريد الإلكتروني مطلوب');
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new ValidationException('صيغة البريد الإلكتروني غير صحيحة');
+    }
+
+    // Generate reset token
+    $token = bin2hex(random_bytes(32));
+    $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+    $db->storePasswordResetToken($email, $token, $expires);
+
+    // Send reset email (implement email sending)
+    // sendPasswordResetEmail($email, $token);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'
+    ]);
+}
+
+/**
+ * Handle password reset
+ */
+function handleResetPassword($auth, $db) {
+    $token = trim($_POST['token'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+
+    if (empty($token) || empty($password)) {
+        throw new ValidationException('جميع الحقول مطلوبة');
+    }
+
+    if ($password !== $confirmPassword) {
+        throw new ValidationException('كلمات المرور غير متطابقة');
+    }
+
+    $email = $db->getEmailByResetToken($token);
+
+    if (!$email) {
+        throw new ValidationException('رمز إعادة التعيين غير صحيح أو منتهي الصلاحية');
+    }
+
+    $auth->resetPassword($email, $password);
+    $db->deletePasswordResetToken($token);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم إعادة تعيين كلمة المرور بنجاح'
+    ]);
+}
+
+/**
+ * Handle email verification
+ */
+function handleVerifyEmail($auth, $db) {
+    $token = trim($_GET['token'] ?? '');
+
+    if (empty($token)) {
+        throw new ValidationException('رمز التحقق مطلوب');
+    }
+
+    $auth->verifyEmail($token);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم التحقق من البريد الإلكتروني بنجاح'
+    ]);
+}
+
+/**
+ * Handle add post
+ */
+function handleAddPost($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $title = trim($_POST['title'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+    $category = trim($_POST['category'] ?? 'general');
+    $tags = trim($_POST['tags'] ?? '');
+    $featured = isset($_POST['featured']);
+
+    if (empty($title) || empty($content)) {
+        throw new ValidationException('العنوان والمحتوى مطلوبان');
+    }
+
+    $postId = $db->addPost($userId, $title, $content, $category, $tags, $featured);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم نشر المحتوى بنجاح',
+        'data' => ['post_id' => $postId]
+    ]);
+}
+
+/**
+ * Handle get posts
+ */
+function handleGetPosts($db) {
+    $page = (int)($_GET['page'] ?? 1);
+    $limit = (int)($_GET['limit'] ?? 10);
+    $category = trim($_GET['category'] ?? '');
+    $search = trim($_GET['search'] ?? '');
+
+    $posts = $db->getPosts($page, $limit, $category, $search);
+    $total = $db->getPostsCount($category, $search);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب المشاركات بنجاح',
+        'data' => [
+            'posts' => $posts,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'pages' => ceil($total / $limit)
+            ]
+        ]
+    ]);
+}
+
+/**
+ * Handle get user posts
+ */
+function handleGetUserPosts($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $posts = $db->getUserPosts($userId);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب مشاركات المستخدم بنجاح',
+        'data' => $posts
+    ]);
+}
+
+/**
+ * Handle update post
+ */
+function handleUpdatePost($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $postId = trim($_POST['post_id'] ?? '');
+    $title = trim($_POST['title'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+    $category = trim($_POST['category'] ?? '');
+    $tags = trim($_POST['tags'] ?? '');
+
+    if (empty($postId) || empty($title) || empty($content)) {
+        throw new ValidationException('جميع الحقول مطلوبة');
+    }
+
+    $db->updatePost($postId, $userId, $title, $content, $category, $tags);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تحديث المشاركة بنجاح'
+    ]);
+}
+
+/**
+ * Handle delete post
+ */
+function handleDeletePost($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $postId = trim($_POST['post_id'] ?? '');
+
+    if (empty($postId)) {
+        throw new ValidationException('معرف المشاركة مطلوب');
+    }
+
+    $db->deletePost($postId, $userId);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم حذف المشاركة بنجاح'
+    ]);
+}
+
+/**
+ * Handle like post
+ */
+function handleLikePost($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $postId = trim($_POST['post_id'] ?? '');
+
+    if (empty($postId)) {
+        throw new ValidationException('معرف المشاركة مطلوب');
+    }
+
+    $db->togglePostLike($postId, $userId);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تحديث الإعجاب بنجاح'
+    ]);
+}
+
+/**
+ * Handle add comment
+ */
+function handleAddComment($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $postId = trim($_POST['post_id'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+    $parentId = trim($_POST['parent_id'] ?? null);
+
+    if (empty($postId) || empty($content)) {
+        throw new ValidationException('جميع الحقول مطلوبة');
+    }
+
+    $commentId = $db->addComment($postId, $userId, $content, $parentId);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم إضافة التعليق بنجاح',
+        'data' => ['comment_id' => $commentId]
+    ]);
+}
+
+/**
+ * Handle get comments
+ */
+function handleGetComments($db) {
+    $postId = trim($_GET['post_id'] ?? '');
+
+    if (empty($postId)) {
+        throw new ValidationException('معرف المشاركة مطلوب');
+    }
+
+    $comments = $db->getComments($postId);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب التعليقات بنجاح',
+        'data' => $comments
+    ]);
+}
+
+/**
+ * Handle add idea
+ */
+function handleAddIdea($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $category = trim($_POST['category'] ?? 'general');
+
+    if (empty($title) || empty($description)) {
+        throw new ValidationException('العنوان والوصف مطلوبان');
+    }
+
+    $ideaId = $db->addIdea($userId, $title, $description, $category);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم مشاركة الفكرة بنجاح',
+        'data' => ['idea_id' => $ideaId]
+    ]);
+}
+
+/**
+ * Handle get ideas
+ */
+function handleGetIdeas($db) {
+    $ideas = $db->getIdeas();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب الأفكار بنجاح',
+        'data' => $ideas
+    ]);
+}
+
+/**
+ * Handle vote idea
+ */
+function handleVoteIdea($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+    $ideaId = trim($_POST['idea_id'] ?? '');
+
+    if (empty($ideaId)) {
+        throw new ValidationException('معرف الفكرة مطلوب');
+    }
+
+    $db->toggleIdeaVote($ideaId, $userId);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم تحديث التصويت بنجاح'
+    ]);
+}
+
+/**
+ * Handle get users
+ */
+function handleGetUsers($db) {
+    $users = $db->getUsers();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب المستخدمين بنجاح',
+        'data' => $users
+    ]);
+}
+
+/**
+ * Handle search
+ */
+function handleSearch($db) {
+    $query = trim($_GET['q'] ?? '');
+    $type = trim($_GET['type'] ?? 'all');
+
+    if (empty($query)) {
+        throw new ValidationException('كلمة البحث مطلوبة');
+    }
+
+    $results = $db->search($query, $type);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم البحث بنجاح',
+        'data' => $results
+    ]);
+}
+
+/**
+ * Handle avatar upload
+ */
+function handleUploadAvatar($auth, $db) {
+    $userId = $auth->getCurrentUserId();
+
+    if (!isset($_FILES['avatar'])) {
+        throw new ValidationException('ملف الصورة مطلوب');
+    }
+
+    $file = $_FILES['avatar'];
+
+    // Validate file
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        throw new ValidationException('حدث خطأ في رفع الملف');
+    }
+
+    if ($file['size'] > 2 * 1024 * 1024) { // 2MB limit
+        throw new ValidationException('حجم الملف كبير جداً (حد أقصى 2 ميجابايت)');
+    }
+
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!in_array($file['type'], $allowedTypes)) {
+        throw new ValidationException('نوع الملف غير مدعوم. يرجى استخدام صورة بصيغة JPEG, PNG, GIF أو WebP');
+    }
+
+    // Generate unique filename
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = 'avatar_' . $userId . '_' . time() . '.' . $extension;
+    $uploadPath = 'uploads/avatars/' . $filename;
+
+    // Create directory if not exists
+    if (!file_exists('uploads/avatars')) {
+        mkdir('uploads/avatars', 0755, true);
+    }
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        throw new ValidationException('فشل في حفظ الملف');
+    }
+
+    // Update user avatar
+    $db->updateUserAvatar($userId, '/' . $uploadPath);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم رفع الصورة الشخصية بنجاح',
+        'data' => ['avatar' => '/' . $uploadPath]
+    ]);
+}
+
+/**
+ * Handle get stats
+ */
+function handleGetStats($db) {
+    $stats = $db->getStats();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'تم جلب الإحصائيات بنجاح',
+        'data' => $stats
+    ]);
+}
+
+/**
+ * Validate CSRF token
+ */
+function validateCSRFToken($token) {
+    if (empty($token)) {
+        return false;
+    }
+
+    $sessionToken = $_SESSION['csrf_token'] ?? '';
+
+    if (empty($sessionToken)) {
+        // Generate new token if not exists
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        return false;
+    }
+
+    return hash_equals($sessionToken, $token);
+}
+
+/**
+ * Custom Exception Classes
+ */
+class ValidationException extends Exception {}
+class AuthenticationException extends Exception {}
+class DatabaseException extends Exception {}
+
+/**
+ * Rate Limiting Class
+ */
+class RateLimit {
+    private $limit = 100; // requests per hour
+    private $window = 3600; // 1 hour
+
+    public function check() {
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $key = "rate_limit_{$ip}";
+        $now = time();
+
+        $requests = $_SESSION[$key] ?? [];
+
+        // Remove old requests
+        $requests = array_filter($requests, function($timestamp) use ($now) {
+            return ($now - $timestamp) < $this->window;
         });
 
-        sendResponse(true, 'تم جلب المشاركات', $posts);
-
-    case 'get_ideas':
-        $db = loadDatabase();
-        $ideas = [];
-
-        foreach ($db['users'] as $user) {
-            if (isset($user['ideas']) && is_array($user['ideas'])) {
-                foreach ($user['ideas'] as $idea) {
-                    $ideas[] = array_merge($idea, ['author_id' => $user['id']]);
-                }
-            }
+        if (count($requests) >= $this->limit) {
+            return false;
         }
 
-        // Sort by date
-        usort($ideas, function($a, $b) {
-            return strtotime($b['date']) - strtotime($a['date']);
-        });
+        $requests[] = $now;
+        $_SESSION[$key] = $requests;
 
-        sendResponse(true, 'تم جلب الأفكار', $ideas);
-
-    case 'get_users':
-        $db = loadDatabase();
-        $users = array_map(function($user) {
-            return array_diff_key($user, array_flip(['password', 'posts', 'ideas']));
-        }, $db['users']);
-
-        sendResponse(true, 'تم جلب المستخدمين', $users);
-
-    default:
-        sendResponse(false, 'إجراء غير معروف');
+        return true;
+    }
 }
 ?>
