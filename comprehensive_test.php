@@ -114,9 +114,12 @@ try {
     $auth->changePassword($userId1, 'TestPass123', 'NewSecurePass123');
     echo "   🔐 تم تغيير كلمة مرور أحمد\n";
 
-    // Test login with new password
+    // Logout current user to test login with new password
+    $auth->logout();
+
+    // Test login with new password using the user ID we stored
     $user1Updated = $auth->login('ahmed@example.com', 'NewSecurePass123');
-    echo "   ✅ تم تسجيل الدخول بكلمة المرور الجديدة\n";
+    echo "   🔑 تم تسجيل الدخول بكلمة المرور الجديدة: " . $user1Updated['name'] . "\n";
     echo "   ✅ نظام إدارة كلمات المرور يعمل بشكل صحيح\n\n";
 
     // Test 10: Final Statistics

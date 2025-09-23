@@ -77,7 +77,7 @@
             "avatar": "👤",
             "bio": "",
             "join_date": "2025-09-23 13:30:28",
-            "last_login": null,
+            "last_login": "2025-09-24 01:06:20",
             "is_active": true,
             "is_verified": false,
             "posts_count": 0,
@@ -94,7 +94,7 @@
             "avatar": "👤",
             "bio": "",
             "join_date": "2025-09-23 13:30:29",
-            "last_login": null,
+            "last_login": "2025-09-24 01:06:20",
             "is_active": true,
             "is_verified": true,
             "posts_count": 0,
@@ -237,6 +237,74 @@
             "comments_count": 0,
             "ideas_count": 0,
             "reputation": 0
+        },
+        {
+            "id": "user_68d319a334ae8",
+            "name": "أحمد محمد علي",
+            "email": "ahmed@example.com",
+            "phone": "+966501234567",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$alJ6eDBjUjgydjBvYkVsOA$RmPH+VxquaqJCsXelHLxvkI8MpYIeWWKiPakGg8bQos",
+            "avatar": "🚀",
+            "bio": "مطور ومدرب في مجال تطوير الذات",
+            "join_date": "2025-09-24 01:05:23",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": false,
+            "posts_count": 1,
+            "comments_count": 1,
+            "ideas_count": 1,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d319a37ad05",
+            "name": "فاطمة علي أحمد",
+            "email": "",
+            "phone": "+966501234568",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$OEE0MGhZV3AxSFIzWWp3Ng$NiRuky4+3h890WHnbFsUM1\/bQOtgZn92iCS7dmz5Ofc",
+            "avatar": "🌱",
+            "bio": "ناشطة بيئية ومهتمة بالتعليم",
+            "join_date": "2025-09-24 01:05:23",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": true,
+            "posts_count": 1,
+            "comments_count": 1,
+            "ideas_count": 1,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d319db5f26c",
+            "name": "أحمد محمد علي",
+            "email": "ahmed@example.com",
+            "phone": "+966501234567",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$QnFjNnFZamhEV3UwMy54dw$97a\/g+g89IyYqagd15eowErgMCokzweK8V7IuYHWBSc",
+            "avatar": "🚀",
+            "bio": "مطور ومدرب في مجال تطوير الذات",
+            "join_date": "2025-09-24 01:06:19",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": false,
+            "posts_count": 1,
+            "comments_count": 1,
+            "ideas_count": 1,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d319dba6247",
+            "name": "فاطمة علي أحمد",
+            "email": "",
+            "phone": "+966501234568",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$R3hnSjZKQjFFM2RNU2Rpbg$qw3p5Ggd4FdwY7CChLKCsOTUNbUiVYbLRpbEc3BZgEA",
+            "avatar": "🌱",
+            "bio": "ناشطة بيئية ومهتمة بالتعليم",
+            "join_date": "2025-09-24 01:06:19",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": true,
+            "posts_count": 1,
+            "comments_count": 1,
+            "ideas_count": 1,
+            "reputation": 0
         }
     ],
     "sessions": {
@@ -265,6 +333,27 @@
             "token": "3eb923d30075b72dcbde5503a14ca55297d1ae5ba7cc0a7e91458291cf623bb2",
             "expires": 1758747564,
             "created_at": "2025-09-23 23:59:24",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d319a37ad05": {
+            "token": "01b80dac52a7fc920d1ed6a42c83268497712a9a1613efa7c8534edd92bf6b97",
+            "expires": 1758751524,
+            "created_at": "2025-09-24 01:05:24",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d276c495979": {
+            "token": "336a7bf858bbe4ad170c0e816fc848f6530a31857e068a54732dbb1f8d2b959f",
+            "expires": 1758751580,
+            "created_at": "2025-09-24 01:06:20",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d319dba6247": {
+            "token": "71d409dd9361f31c44feaaedfd2573c12d304571a6ea0b46c20c0eb9bc851e3a",
+            "expires": 1758751579,
+            "created_at": "2025-09-24 01:06:19",
             "ip_address": "127.0.0.1",
             "user_agent": "CLI"
         }
@@ -433,6 +522,86 @@
             "likes": [],
             "comments_count": 1,
             "status": "published"
+        },
+        {
+            "id": "post_68d319a4a48e5",
+            "user_id": "user_68d319a334ae8",
+            "title": "كيفية تطوير الذات",
+            "content": "المحتوى التفصيلي لتطوير الذات وتحقيق الأهداف",
+            "excerpt": "المحتوى التفصيلي لتطوير الذات وتحقيق الأهداف",
+            "category": "personal_development",
+            "tags": [
+                "تطوير_ذاتي",
+                "أهداف"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:05:24",
+            "updated_at": "2025-09-24 01:05:24",
+            "views": 0,
+            "likes": [
+                "user_68d319a37ad05"
+            ],
+            "comments_count": 1,
+            "status": "published"
+        },
+        {
+            "id": "post_68d319a4ac66c",
+            "user_id": "user_68d319a37ad05",
+            "title": "أهمية القراءة",
+            "content": "فوائد القراءة في حياة الإنسان",
+            "excerpt": "فوائد القراءة في حياة الإنسان",
+            "category": "education",
+            "tags": [
+                "قراءة",
+                "تعليم"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:05:24",
+            "updated_at": "2025-09-24 01:05:24",
+            "views": 0,
+            "likes": [],
+            "comments_count": 1,
+            "status": "published"
+        },
+        {
+            "id": "post_68d319dc4277d",
+            "user_id": "user_68d319db5f26c",
+            "title": "كيفية تطوير الذات",
+            "content": "المحتوى التفصيلي لتطوير الذات وتحقيق الأهداف",
+            "excerpt": "المحتوى التفصيلي لتطوير الذات وتحقيق الأهداف",
+            "category": "personal_development",
+            "tags": [
+                "تطوير_ذاتي",
+                "أهداف"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:06:20",
+            "updated_at": "2025-09-24 01:06:20",
+            "views": 0,
+            "likes": [
+                "user_68d319dba6247"
+            ],
+            "comments_count": 1,
+            "status": "published"
+        },
+        {
+            "id": "post_68d319dc42efc",
+            "user_id": "user_68d319dba6247",
+            "title": "أهمية القراءة",
+            "content": "فوائد القراءة في حياة الإنسان",
+            "excerpt": "فوائد القراءة في حياة الإنسان",
+            "category": "education",
+            "tags": [
+                "قراءة",
+                "تعليم"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:06:20",
+            "updated_at": "2025-09-24 01:06:20",
+            "views": 0,
+            "likes": [],
+            "comments_count": 1,
+            "status": "published"
         }
     ],
     "comments": [
@@ -452,6 +621,42 @@
             "content": "هذا تعليق تجريبي",
             "parent_id": null,
             "created_at": "2025-09-23 23:59:25",
+            "likes": []
+        },
+        {
+            "id": "comment_68d319a4b1dfa",
+            "post_id": "post_68d319a4a48e5",
+            "user_id": "user_68d319a37ad05",
+            "content": "مقالة رائعة جداً، شكراً لك!",
+            "parent_id": null,
+            "created_at": "2025-09-24 01:05:24",
+            "likes": []
+        },
+        {
+            "id": "comment_68d319a4b9cd0",
+            "post_id": "post_68d319a4ac66c",
+            "user_id": "user_68d319a334ae8",
+            "content": "موضوع مهم جداً في وقتنا الحالي",
+            "parent_id": null,
+            "created_at": "2025-09-24 01:05:24",
+            "likes": []
+        },
+        {
+            "id": "comment_68d319dc44121",
+            "post_id": "post_68d319dc4277d",
+            "user_id": "user_68d319dba6247",
+            "content": "مقالة رائعة جداً، شكراً لك!",
+            "parent_id": null,
+            "created_at": "2025-09-24 01:06:20",
+            "likes": []
+        },
+        {
+            "id": "comment_68d319dc460ec",
+            "post_id": "post_68d319dc42efc",
+            "user_id": "user_68d319db5f26c",
+            "content": "موضوع مهم جداً في وقتنا الحالي",
+            "parent_id": null,
+            "created_at": "2025-09-24 01:06:20",
             "likes": []
         }
     ],
@@ -481,13 +686,65 @@
             ],
             "status": "pending",
             "comments_count": 0
+        },
+        {
+            "id": "idea_68d319a4acaff",
+            "user_id": "user_68d319a334ae8",
+            "title": "تطبيق لتعلم اللغات",
+            "description": "تطبيق يساعد في تعلم اللغات بطريقة تفاعلية",
+            "category": "technology",
+            "created_at": "2025-09-24 01:05:24",
+            "votes": [
+                "user_68d319a37ad05"
+            ],
+            "status": "pending",
+            "comments_count": 0
+        },
+        {
+            "id": "idea_68d319a4ace59",
+            "user_id": "user_68d319a37ad05",
+            "title": "مبادرة بيئية",
+            "description": "مبادرة للحفاظ على البيئة في المدن",
+            "category": "environment",
+            "created_at": "2025-09-24 01:05:24",
+            "votes": [
+                "user_68d319a334ae8"
+            ],
+            "status": "pending",
+            "comments_count": 0
+        },
+        {
+            "id": "idea_68d319dc436c2",
+            "user_id": "user_68d319db5f26c",
+            "title": "تطبيق لتعلم اللغات",
+            "description": "تطبيق يساعد في تعلم اللغات بطريقة تفاعلية",
+            "category": "technology",
+            "created_at": "2025-09-24 01:06:20",
+            "votes": [
+                "user_68d319dba6247"
+            ],
+            "status": "pending",
+            "comments_count": 0
+        },
+        {
+            "id": "idea_68d319dc43c90",
+            "user_id": "user_68d319dba6247",
+            "title": "مبادرة بيئية",
+            "description": "مبادرة للحفاظ على البيئة في المدن",
+            "category": "environment",
+            "created_at": "2025-09-24 01:06:20",
+            "votes": [
+                "user_68d319db5f26c"
+            ],
+            "status": "pending",
+            "comments_count": 0
         }
     ],
     "stats": {
-        "total_users": 14,
-        "total_posts": 8,
-        "total_comments": 1,
-        "total_ideas": 2,
-        "last_updated": "2025-09-23 23:59:26"
+        "total_users": 18,
+        "total_posts": 12,
+        "total_comments": 4,
+        "total_ideas": 6,
+        "last_updated": "2025-09-24 01:06:21"
     }
 }
