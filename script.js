@@ -1286,6 +1286,177 @@ class PlatformApp {
         this.showNotification('تم تسجيل الخروج بنجاح', 'success');
     }
 
+    // Toggle user menu
+    toggleUserMenu() {
+        const dropdown = document.getElementById('user-dropdown');
+        const button = document.querySelector('.user-menu-button');
+
+        if (dropdown && button) {
+            const isOpen = dropdown.classList.contains('show');
+            dropdown.classList.toggle('show');
+            button.setAttribute('aria-expanded', !isOpen);
+        }
+    }
+
+    // Toggle mobile menu
+    toggleMobileMenu() {
+        const navbarMenu = document.querySelector('.navbar-menu');
+        const mobileToggle = document.querySelector('.mobile-menu-toggle');
+
+        if (navbarMenu && mobileToggle) {
+            const isOpen = navbarMenu.classList.contains('show');
+
+            navbarMenu.classList.toggle('show');
+            mobileToggle.classList.toggle('active');
+            mobileToggle.setAttribute('aria-expanded', !isOpen);
+
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = !isOpen ? 'hidden' : '';
+        }
+    }
+
+    // Scroll to section
+    scrollToSection(sectionId) {
+        const section = document.querySelector(sectionId);
+        if (section) {
+            this.smoothScrollTo(section);
+        }
+    }
+
+    // Show login form
+    showLoginForm() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+
+        if (loginForm && registerForm && loginTab && registerTab) {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+        }
+    }
+
+    // Show register form
+    showRegisterForm() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+
+        if (loginForm && registerForm && loginTab && registerTab) {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            loginTab.classList.remove('active');
+            registerTab.classList.add('active');
+        }
+    }
+
+    // Show forgot password
+    showForgotPassword() {
+        this.showNotification('ميزة استعادة كلمة المرور قيد التطوير', 'info');
+    }
+
+    // Close auth modal
+    closeAuthModal() {
+        const modal = document.getElementById('auth-modal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Close create post modal
+    closeCreatePostModal() {
+        const modal = document.getElementById('create-post-modal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Media page functions
+    searchMedia() {
+        const searchInput = document.getElementById('media-search');
+        if (searchInput) {
+            const query = searchInput.value;
+            this.showNotification(`البحث عن: ${query} - قيد التطوير`, 'info');
+        }
+    }
+
+    filterMedia(type) {
+        this.showNotification(`تصفية الوسائط: ${type} - قيد التطوير`, 'info');
+    }
+
+    filterMediaByCategory() {
+        const categorySelect = document.getElementById('media-category-filter');
+        if (categorySelect) {
+            const category = categorySelect.value;
+            this.showNotification(`تصفية بالفئة: ${category} - قيد التطوير`, 'info');
+        }
+    }
+
+    sortMedia() {
+        const sortSelect = document.getElementById('media-sort-filter');
+        if (sortSelect) {
+            const sortBy = sortSelect.value;
+            this.showNotification(`ترتيب: ${sortBy} - قيد التطوير`, 'info');
+        }
+    }
+
+    showMediaUploadModal() {
+        this.showNotification('إنشاء وسائط جديدة - قيد التطوير', 'info');
+    }
+
+    showMediaTypeModal(type) {
+        this.showNotification(`استكشاف ${type} - قيد التطوير`, 'info');
+    }
+
+    switchMediaTab(type) {
+        // Remove active class from all tabs
+        document.querySelectorAll('.media-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Add active class to clicked tab
+        event.target.classList.add('active');
+
+        this.showNotification(`تبديل إلى ${type} - قيد التطوير`, 'info');
+    }
+
+    previewMedia() {
+        this.showNotification('معاينة الوسائط - قيد التطوير', 'info');
+    }
+
+    uploadMedia() {
+        this.showNotification('نشر الوسائط - قيد التطوير', 'info');
+    }
+
+    closeMediaUploadModal() {
+        const modal = document.getElementById('media-upload-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    closeMediaPreviewModal() {
+        const modal = document.getElementById('media-preview-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    editMedia() {
+        this.showNotification('تعديل الوسائط - قيد التطوير', 'info');
+    }
+
+    publishMedia() {
+        this.showNotification('نشر الوسائط - قيد التطوير', 'info');
+    }
+
     showProfile() {
         if (!this.currentUser) {
             this.showAuthModal();
