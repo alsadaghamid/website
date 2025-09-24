@@ -9,7 +9,7 @@
             "avatar": "👤",
             "bio": "",
             "join_date": "2025-09-23 13:27:14",
-            "last_login": "2025-09-23 23:59:25",
+            "last_login": "2025-09-24 01:43:05",
             "is_active": true,
             "is_verified": true,
             "posts_count": 0,
@@ -43,7 +43,7 @@
             "avatar": "👤",
             "bio": "",
             "join_date": "2025-09-23 13:28:31",
-            "last_login": null,
+            "last_login": "2025-09-24 01:42:25",
             "is_active": true,
             "is_verified": true,
             "posts_count": 0,
@@ -77,7 +77,7 @@
             "avatar": "👤",
             "bio": "",
             "join_date": "2025-09-23 13:30:28",
-            "last_login": "2025-09-24 01:06:20",
+            "last_login": "2025-09-24 01:39:22",
             "is_active": true,
             "is_verified": false,
             "posts_count": 0,
@@ -94,7 +94,7 @@
             "avatar": "👤",
             "bio": "",
             "join_date": "2025-09-23 13:30:29",
-            "last_login": "2025-09-24 01:06:20",
+            "last_login": "2025-09-24 01:39:22",
             "is_active": true,
             "is_verified": true,
             "posts_count": 0,
@@ -305,6 +305,91 @@
             "comments_count": 1,
             "ideas_count": 1,
             "reputation": 0
+        },
+        {
+            "id": "user_68d321970e3a3",
+            "name": "أحمد محمد علي",
+            "email": "ahmed@example.com",
+            "phone": "+966501234567",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$TWcxbGQ1d1l5TGFpM0o0TQ$nPAsmwp29uijCrfLkJEXutJgge2mMvrJQEX6BFLzjto",
+            "avatar": "🚀",
+            "bio": "مطور ومدرب في مجال تطوير الذات",
+            "join_date": "2025-09-24 01:39:19",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": false,
+            "posts_count": 1,
+            "comments_count": 1,
+            "ideas_count": 1,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d321974fe3b",
+            "name": "فاطمة علي أحمد",
+            "email": "",
+            "phone": "+966501234568",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$a0YxcS5LWVF2TUhqbHpLZw$at9bInKi+8YGZNHewePRW\/C5XJK8D2Y76OzaDQhWgkE",
+            "avatar": "🌱",
+            "bio": "ناشطة بيئية ومهتمة بالتعليم",
+            "join_date": "2025-09-24 01:39:19",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": true,
+            "posts_count": 1,
+            "comments_count": 1,
+            "ideas_count": 1,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d322510a5e6",
+            "name": "مستخدم سريع",
+            "email": "",
+            "phone": "+966501234569",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$QXNxdFpxNjRTYVZRUVp4OQ$YsMbARpq7TkL\/As+nYdbwqZtvAG+9UlUvKpZj6tMcdM",
+            "avatar": "👤",
+            "bio": "",
+            "join_date": "2025-09-24 01:42:25",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": true,
+            "posts_count": 0,
+            "comments_count": 0,
+            "ideas_count": 0,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d322611d877",
+            "name": "مستخدم أدنى",
+            "email": "",
+            "phone": "+966501234570",
+            "password": "$2y$10$FCl9.1m8VWC0gl1qgL08FuyLZxV6gT2KExbV5BKFjEHHApzGHylSS",
+            "avatar": "👤",
+            "bio": "",
+            "join_date": "2025-09-24 01:42:41",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": true,
+            "posts_count": 0,
+            "comments_count": 0,
+            "ideas_count": 0,
+            "reputation": 0
+        },
+        {
+            "id": "user_68d3227945e5e",
+            "name": "مستخدم محدث",
+            "email": "",
+            "phone": "+966501234567",
+            "password": "$argon2id$v=19$m=65536,t=4,p=3$a3RrQ2V4bUVuZElLWndwOQ$IZS3ndm91+innM8qkoFQAbcLlfkx1PE+YP\/Kpv6QdMg",
+            "avatar": "🎭",
+            "bio": "سيرة ذاتية جديدة",
+            "join_date": "2025-09-24 01:43:05",
+            "last_login": null,
+            "is_active": true,
+            "is_verified": true,
+            "posts_count": 1,
+            "comments_count": 0,
+            "ideas_count": 1,
+            "reputation": 0
         }
     ],
     "sessions": {
@@ -323,9 +408,9 @@
             "user_agent": "CLI"
         },
         "user_68d276021af52": {
-            "token": "81288b3425bdf9572609f10f4d5711f6742a62b14287a071bf8e58f830fe8098",
-            "expires": 1758747565,
-            "created_at": "2025-09-23 23:59:25",
+            "token": "a39549b5636a80533d644f2cea11cc4e22349044b5848be4a1cdcd4ca77ba0af",
+            "expires": 1758753785,
+            "created_at": "2025-09-24 01:43:05",
             "ip_address": "127.0.0.1",
             "user_agent": "CLI"
         },
@@ -344,9 +429,9 @@
             "user_agent": "CLI"
         },
         "user_68d276c495979": {
-            "token": "336a7bf858bbe4ad170c0e816fc848f6530a31857e068a54732dbb1f8d2b959f",
-            "expires": 1758751580,
-            "created_at": "2025-09-24 01:06:20",
+            "token": "fd07dd20bb5bd7d7dcb4fb5dbcb5896b294af3b8db9a5279e94c5d40bc773664",
+            "expires": 1758753562,
+            "created_at": "2025-09-24 01:39:22",
             "ip_address": "127.0.0.1",
             "user_agent": "CLI"
         },
@@ -354,6 +439,34 @@
             "token": "71d409dd9361f31c44feaaedfd2573c12d304571a6ea0b46c20c0eb9bc851e3a",
             "expires": 1758751579,
             "created_at": "2025-09-24 01:06:19",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d321974fe3b": {
+            "token": "8f6d851ddc25f91bcde83182c6335db4a97ebfffac0f5fcfb0578c562a7bdad3",
+            "expires": 1758753561,
+            "created_at": "2025-09-24 01:39:21",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d322510a5e6": {
+            "token": "c93c8d5d2b0eb412020e71871b5d139c0546e6533a8e8071cc2360d968aa2026",
+            "expires": 1758753745,
+            "created_at": "2025-09-24 01:42:25",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d2764fcf709": {
+            "token": "13e83b6aa7a9e5580fa2c319e866e848d3857f63abadf282ccdfdb62899fa3cf",
+            "expires": 1758753745,
+            "created_at": "2025-09-24 01:42:25",
+            "ip_address": "127.0.0.1",
+            "user_agent": "CLI"
+        },
+        "user_68d3227945e5e": {
+            "token": "c941631e21aff6d99020b518e81555d0788c93690fd1f85231723117e2659263",
+            "expires": 1758753785,
+            "created_at": "2025-09-24 01:43:05",
             "ip_address": "127.0.0.1",
             "user_agent": "CLI"
         }
@@ -602,6 +715,64 @@
             "likes": [],
             "comments_count": 1,
             "status": "published"
+        },
+        {
+            "id": "post_68d3219a6898a",
+            "user_id": "user_68d321970e3a3",
+            "title": "كيفية تطوير الذات",
+            "content": "المحتوى التفصيلي لتطوير الذات وتحقيق الأهداف",
+            "excerpt": "المحتوى التفصيلي لتطوير الذات وتحقيق الأهداف",
+            "category": "personal_development",
+            "tags": [
+                "تطوير_ذاتي",
+                "أهداف"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:39:22",
+            "updated_at": "2025-09-24 01:39:22",
+            "views": 0,
+            "likes": [
+                "user_68d321974fe3b"
+            ],
+            "comments_count": 1,
+            "status": "published"
+        },
+        {
+            "id": "post_68d3219a822cb",
+            "user_id": "user_68d321974fe3b",
+            "title": "أهمية القراءة",
+            "content": "فوائد القراءة في حياة الإنسان",
+            "excerpt": "فوائد القراءة في حياة الإنسان",
+            "category": "education",
+            "tags": [
+                "قراءة",
+                "تعليم"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:39:22",
+            "updated_at": "2025-09-24 01:39:22",
+            "views": 0,
+            "likes": [],
+            "comments_count": 1,
+            "status": "published"
+        },
+        {
+            "id": "post_68d32279dbab5",
+            "user_id": "user_68d3227945e5e",
+            "title": "عنوان تجريبي",
+            "content": "محتوى تجريبي",
+            "excerpt": "محتوى تجريبي",
+            "category": "general",
+            "tags": [
+                "تجريبي"
+            ],
+            "featured": false,
+            "created_at": "2025-09-24 01:43:05",
+            "updated_at": "2025-09-24 01:43:05",
+            "views": 0,
+            "likes": [],
+            "comments_count": 0,
+            "status": "published"
         }
     ],
     "comments": [
@@ -657,6 +828,24 @@
             "content": "موضوع مهم جداً في وقتنا الحالي",
             "parent_id": null,
             "created_at": "2025-09-24 01:06:20",
+            "likes": []
+        },
+        {
+            "id": "comment_68d3219a82eba",
+            "post_id": "post_68d3219a6898a",
+            "user_id": "user_68d321974fe3b",
+            "content": "مقالة رائعة جداً، شكراً لك!",
+            "parent_id": null,
+            "created_at": "2025-09-24 01:39:22",
+            "likes": []
+        },
+        {
+            "id": "comment_68d3219a8329d",
+            "post_id": "post_68d3219a822cb",
+            "user_id": "user_68d321970e3a3",
+            "content": "موضوع مهم جداً في وقتنا الحالي",
+            "parent_id": null,
+            "created_at": "2025-09-24 01:39:22",
             "likes": []
         }
     ],
@@ -738,13 +927,52 @@
             ],
             "status": "pending",
             "comments_count": 0
+        },
+        {
+            "id": "idea_68d3219a826c5",
+            "user_id": "user_68d321970e3a3",
+            "title": "تطبيق لتعلم اللغات",
+            "description": "تطبيق يساعد في تعلم اللغات بطريقة تفاعلية",
+            "category": "technology",
+            "created_at": "2025-09-24 01:39:22",
+            "votes": [
+                "user_68d321974fe3b"
+            ],
+            "status": "pending",
+            "comments_count": 0
+        },
+        {
+            "id": "idea_68d3219a82abe",
+            "user_id": "user_68d321974fe3b",
+            "title": "مبادرة بيئية",
+            "description": "مبادرة للحفاظ على البيئة في المدن",
+            "category": "environment",
+            "created_at": "2025-09-24 01:39:22",
+            "votes": [
+                "user_68d321970e3a3"
+            ],
+            "status": "pending",
+            "comments_count": 0
+        },
+        {
+            "id": "idea_68d3227a14442",
+            "user_id": "user_68d3227945e5e",
+            "title": "فكرة تجريبية",
+            "description": "وصف الفكرة",
+            "category": "general",
+            "created_at": "2025-09-24 01:43:06",
+            "votes": [
+                "user_68d3227945e5e"
+            ],
+            "status": "pending",
+            "comments_count": 0
         }
     ],
     "stats": {
-        "total_users": 18,
-        "total_posts": 12,
-        "total_comments": 4,
-        "total_ideas": 6,
-        "last_updated": "2025-09-24 01:06:21"
+        "total_users": 23,
+        "total_posts": 15,
+        "total_comments": 8,
+        "total_ideas": 9,
+        "last_updated": "2025-09-24 01:43:06"
     }
 }
