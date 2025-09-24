@@ -13,8 +13,8 @@ define('SITE_URL', 'https://www.antsahib.almunsaa.com');
 define('SITE_EMAIL', 'info@antsahib.almunsaa.com');
 
 // Security Configuration - These should be set via environment variables in production
-define('ENCRYPTION_KEY', getenv('ENCRYPTION_KEY') ?: 'your-encryption-key-change-in-production');
-define('JWT_SECRET', getenv('JWT_SECRET') ?: 'your-jwt-secret-change-in-production');
+define('ENCRYPTION_KEY', getenv('ENCRYPTION_KEY') ?: 'b8bde4b704fb79391f6aa5b20f44eaf6177aa49cc9bfc9c3f6639e6b5812f9c8');
+define('JWT_SECRET', getenv('JWT_SECRET') ?: 'e4afd2cc6c99a3676bdf3037a5635a0f518044fda9ee39493e7c81adcfe25875983103832b561c8537111b642eae6d2b3408a1fcbbd33d644914dfb2d89b2e12');
 define('CSRF_TOKEN_LIFETIME', 3600); // 1 hour
 
 // Rate Limiting
@@ -33,10 +33,10 @@ define('MAX_POSTS_PER_DAY', 10);
 define('MAX_COMMENTS_PER_HOUR', 20);
 
 // Email Configuration (for future implementation)
-define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.example.com');
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.gmail.com');
 define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
-define('SMTP_USERNAME', getenv('SMTP_USERNAME') ?: 'your-email@example.com');
-define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') ?: 'your-password');
+define('SMTP_USERNAME', getenv('SMTP_USERNAME') ?: 'noreply@antsahib.almunsaa.com');
+define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') ?: 'your-app-specific-password-here');
 define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'tls');
 
 // Social Media Links
@@ -67,7 +67,7 @@ if (empty(JWT_SECRET) || JWT_SECRET === 'your-jwt-secret-change-in-production') 
 }
 
 if (empty(SMTP_USERNAME) || empty(SMTP_PASSWORD) ||
-    SMTP_USERNAME === 'your-email@example.com' || SMTP_PASSWORD === 'your-password') {
+    SMTP_USERNAME === 'noreply@antsahib.almunsaa.com' || SMTP_PASSWORD === 'your-app-specific-password-here') {
     logMessage('WARNING: SMTP credentials are not properly configured', 'ERROR');
 }
 

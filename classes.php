@@ -667,6 +667,79 @@ class Database {
         unset($user['password']);
         return $user;
     }
+
+    public function setUserVerificationToken($email, $token, $expires) {
+        foreach ($this->data['users'] as &$user) {
+            if ($user['email'] === $email) {
+                $user['verification_token'] = $token;
+                $user['verification_expires'] = $expires;
+                $this->saveData();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function verifyUserToken($token) {
+        foreach ($this->data['users'] as &$user) {
+            if (isset($user['verification_token']) && $user['verification_token'] === $token) {
+                if (strtotime($user['verification_expires']) > time()) {
+                    $user['is_verified'] = true;
+                    unset($user['verification_token']);
+                    unset($user['verification_expires']);
+                    $this->saveData();
+                    return $user['id'];
+                }
+            }
+        }
+        return false;
+    }
+
+    public function getUserByVerificationToken($token) {
+        foreach ($this->data['users'] as $user) {
+            if (isset($user['verification_token']) && $user['verification_token'] === $token) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
+    public function generateVerificationToken($email) {
+        $token = bin2hex(random_bytes(32));
+        $expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+        // Store verification token for the user using Database method
+        $this->setUserVerificationToken($email, $token, $expires);
+
+        return $token;
+    }
+
+    public function sendEmail($to, $subject, $message) {
+        try {
+            // For development, we'll use PHP's built-in mail function
+            // In production, you should use PHPMailer or similar library
+            $headers = [
+                'MIME-Version: 1.0',
+                'Content-type: text/html; charset=UTF-8',
+                'From: ' . SITE_NAME . ' <' . SITE_EMAIL . '>',
+                'Reply-To: ' . SITE_EMAIL,
+                'X-Mailer: PHP/' . phpversion()
+            ];
+
+            $headersString = implode("\r\n", $headers);
+
+            if (mail($to, $subject, $message, $headersString)) {
+                logMessage("Email sent successfully to: $to", 'INFO');
+                return true;
+            } else {
+                logMessage("Failed to send email to: $to", 'ERROR');
+                return false;
+            }
+        } catch (Exception $e) {
+            logMessage("Email sending error: " . $e->getMessage(), 'ERROR');
+            return false;
+        }
+    }
 }
 
 /**
@@ -863,18 +936,48 @@ class Auth {
     }
 
     public function sendVerificationEmail($email) {
-        // TODO: Implement email sending
-        // For now, just log the action
-        error_log("Verification email sent to: $email");
+        // Send verification email using configured SMTP settings
+        $subject = 'تأكيد البريد الإلكتروني - أنت صاحب المنصة';
+        $verificationLink = SITE_URL . '/verify-email?token=' . urlencode($this->db->generateVerificationToken($email));
+
+        $message = "
+        <html>
+        <head>
+            <title>تأكيد البريد الإلكتروني</title>
+            <style>
+                body { font-family: Arial, sans-serif; direction: rtl; text-align: right; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #007bff; color: white; padding: 20px; text-align: center; }
+                .content { padding: 20px; background-color: #f8f9fa; }
+                .button { background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 20px 0; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>أنت صاحب المنصة</h1>
+                    <h2>تأكيد البريد الإلكتروني</h2>
+                </div>
+                <div class='content'>
+                    <p>مرحباً بك في منصة أنت صاحب المنصة!</p>
+                    <p>شكراً لك على التسجيل. لإكمال عملية التسجيل، يرجى النقر على الرابط أدناه لتأكيد بريدك الإلكتروني:</p>
+                    <p style='text-align: center;'>
+                        <a href='$verificationLink' class='button'>تأكيد البريد الإلكتروني</a>
+                    </p>
+                    <p>إذا لم تقم بطلب هذا التأكيد، يرجى تجاهل هذا البريد.</p>
+                    <p>مع خالص التحية،<br>فريق أنت صاحب المنصة</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        return $this->db->sendEmail($email, $subject, $message);
     }
 
     public function verifyEmail($token) {
-        // TODO: Implement email verification
-        // For now, just mark all users as verified
-        foreach ($this->db->data['users'] as &$user) {
-            $user['is_verified'] = true;
-        }
-        $this->db->saveData();
+        // Find user by verification token using Database method
+        return $this->db->verifyUserToken($token) !== false;
     }
 
     public function updateUserVerification($userId, $isVerified) {
